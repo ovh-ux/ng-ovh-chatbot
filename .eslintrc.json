@@ -1,0 +1,10 @@
+{
+    "extends": "ovh",
+    "env": {
+        "jasmine": true,
+        "browser": true
+    },
+    "globals": {
+     "angular": true
+    }
+}

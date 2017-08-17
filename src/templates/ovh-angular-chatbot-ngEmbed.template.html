@@ -1,0 +1,96 @@
+<!--- SOURCE : https://github.com/ritz078/ng-embed#default-template -->
+<!--====== Main text with emoticons and link ============-->
+
+<div ng-bind-html="neText"></div>
+
+<!--==========Video Embedding code (Youtube and vimeo)============-->
+
+<div class="ne-video" ng-if="video.host" class="fade">
+    <div class="ne-video-preview" ng-hide="nePlayVideo">
+        <div class="ne-video-thumb" ng-click="nePlayVideo=!nePlayVideo">
+            <img ng-src="{{video.thumbnail}}" alt=""/>
+            <i class="fa fa-play-circle-o"></i>
+        </div>
+        <div class="ne-video-detail">
+            <div class="ne-video-title">
+                <a ng-href="{{video.url}}">{{video.title}}</a>
+            </div>
+            <div class="ne-video-desc">
+                {{video.description}}
+            </div>
+            <div class="ne-video-stats">
+                <span><i class="fa fa-eye"></i> {{video.views}}</span>
+                <span><i class="fa fa-heart"></i> {{video.likes}}</span>
+            </div>
+        </div>
+    </div>
+    <div class="ne-video-player" ng-if="nePlayVideo">
+        <iframe ng-src="{{video.embedSrc}}" frameBorder="0" width="{{video.width}}" height="{{video.height}}" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+    </div>
+</div>
+
+<!--=====video player for mp4 and other html5 player supported videos==-->
+
+<div class="ne-video" ng-if="video.basic">
+    <div class="ne-video-player">
+        <div class="player">
+            <video ng-src="{{video.basic}}" controls></video>
+        </div>
+    </div>
+</div>
+
+<!--====== image preview code (gif|jpg|jpeg|tiff|png|svg|webp) =======-->
+
+<div ng-init="neImageLong=false" ng-class="{false:'ne-image', true:'ne-image ne-image-long'}[neImageLong]" ng-if="image.url">
+    <div class="ne-image-wrapper">
+        <img ng-src="{{image.url}}" ng-click="neImageLong=!neImageLong" alt=""/>
+    </div>
+</div>
+<div class="ne-pdf" ng-if="pdf.url">
+    <div class="ne-pdf-preview" ng-hide="neShowPdf">
+        <div class="ne-pdf-icon">
+            <i class="fa fa-file-pdf-o" aria-label="pdf"></i>
+        </div>
+        <div class="ne-pdf-detail" >
+            <div class="ne-pdf-title">
+                <a href="{{pdf.url}}">{{pdf.url}}</a>
+            </div>
+            <div class="ne-pdf-view">
+                <button type="button"><i class="fa fa-download" aria-hiden="true"></i> <a ng-href="{{pdf.url}}" target="_blank" title="Télécharger (Nouvelle fenêtre)">Télécharger</a></button>
+                <button ng-click="neShowPdf=!neShowPdf" type="button"><i class="fa fa-eye"></i> Voir PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!--====== pdf viewer =========-->
+
+    <div class="ne-pdf-viewer" ng-if="neShowPdf">
+        <iframe ng-src="{{pdf.url}}" frameBorder="0"></iframe>
+    </div>
+</div>
+
+<!--===== audio player ===========-->
+
+<div class="ne-audio" ng-if="audio.url">
+    <audio ng-src="{{audio.url}}" controls></audio>
+</div>
+
+<div ng-if="tweets" ng-repeat="tweet in tweets">
+    <div ng-bind-html="tweet"></div>
+</div>
+<div ng-if="videoServices" class="ne-video" ng-repeat="v in videoServices">
+    <div class="ne-video-player">
+        <div class="player">
+            <div ng-bind-html="v"></div>
+        </div>
+    </div>
+</div>
+<div ng-if="audioServices" class="ne-audio" ng-repeat="a in audioServices">
+    <div ng-bind-html="a"></div>
+</div>
+<div ng-if="codeServices" class="ne-embed" ng-repeat="c in codeServices">
+    <div ng-bind-html="c"></div>
+</div>
+<div ng-if="gist" class="ne-gist" ng-repeat="g in gist">
+    <ne-gist id="{{g}}"></ne-gist>
+</div>
