@@ -232,6 +232,6 @@ module.exports = function (grunt) {
      */
     grunt.registerTask("release", "Release", () => {
         const type = grunt.option("type") || "patch";
-        grunt.task.run(["test", `bump-only:${type}`, "buildProd", "bump-commit"]);
+        grunt.task.run(["test", `bump-only:${type}`]);
     });
 };
