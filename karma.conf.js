@@ -25,7 +25,7 @@ module.exports = function (config) {
             'node_modules/angular-sanitize/angular-sanitize.js',
             'node_modules/angular-mocks/angular-mocks.js',
             'node_modules/ng-emoticons/dist/ng-emoticons.min.js',
-            '.test/chatbot.js',
+            '.test/ovh-angular-chatbot.js',
             '.test/*.js',
             '.test/**/*.js'
         ],
