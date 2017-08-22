@@ -123,9 +123,9 @@ module.exports = function (grunt) {
         // To release
         bump: {
             options: {
-                pushTo: "origin master",
-                files: ["package.json", "bower.json"],
-                updateConfigs: ["pkg", "bower"],
+                pushTo: "origin",
+                files: ["package.json"],
+                updateConfigs: ["pkg"],
                 commitFiles: ["-a"]
             }
         },
@@ -214,6 +214,7 @@ module.exports = function (grunt) {
         }
     });
 
+
     grunt.registerTask("buildProd", ["clean", "eslint", "ngtemplates:main", "concat:dist", "babel", "complexity", "ngAnnotate", "less:dist", "postcss", "cssmin", "uglify", "ngdocs"]);
 
     grunt.registerTask("lint", ["eslint"]);
@@ -225,13 +226,15 @@ module.exports = function (grunt) {
 
     grunt.registerTask("test", ["eslint", "ngtemplates:test", "babel:test", "karma"]);
 
-    /**
-     * --type=patch
-     * --type=minor
-     * --type=major
-     */
-    grunt.registerTask("release", "Release", () => {
-        const type = grunt.option("type") || "patch";
-        grunt.task.run(["test", `bump-only:${type}`]);
-    });
+     // Increase version number. Type = minor|major|patch
+     grunt.registerTask("release", "Release", function () {
+         var type = grunt.option("type");
+
+         if (type && ~["patch", "minor", "major"].indexOf(type)) {
+             grunt.task.run(["bump-only:" + type]);
+         } else {
+             grunt.verbose.or.write("You try to release in a weird version type [" + type + "]").error();
+             grunt.fail.warn("Please try with --type=patch|minor|major");
+         }
+     });
 };
