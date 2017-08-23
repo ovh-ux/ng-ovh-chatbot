@@ -100,6 +100,7 @@ class ChatbotCtrl {
             return;
         }
         this.$interval.cancel(this.tickInterval);
+        self.tickInterval = undefined;
         this.error = null;
         this.processing = true;
         this.chatbotService
@@ -156,6 +157,7 @@ class ChatbotCtrl {
 
     errorHandler () {
         this.$interval.cancel(this.tickInterval);
+        this.tickInterval = undefined;
         this.error = true;
         this.processing = false;
     }
