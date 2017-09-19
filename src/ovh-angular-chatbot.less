@@ -29,15 +29,6 @@
 @chatbot-smallscreen: ~"only screen and (max-width: 767px) ";
 
 #ovh-angular-chatbot {
-    position: fixed;
-    height: @chatbot-height;
-    width: @chatbot-width;
-
-    right: @chatbot-margin;
-    bottom: @chatbot-margin;
-
-    z-index: @chatbot-z-index;
-
     padding: 0;
     margin: 0;
 
@@ -179,7 +170,15 @@
     }
 
     .chatbot-main {
+        position: fixed;
+        height: @chatbot-height;
         width: @chatbot-width;
+
+        right: @chatbot-margin;
+        bottom: @chatbot-margin;
+
+        z-index: @chatbot-z-index;
+
         overflow: hidden;
 
         border: 1px solid @chatbot-borderColor;

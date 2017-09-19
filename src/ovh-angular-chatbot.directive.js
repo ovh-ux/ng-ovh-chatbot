@@ -20,11 +20,15 @@ angular.module("ovh-angular-chatbot").directive("chatbot", () => ({
             ctrl.pullRate = parseInt(attrs.pull, 10);
         }
 
-        elem.draggable({
+        var draggableOptions = {
             handle: ".chatbot-header",
             cursor: "move",
             containment: "window"
-        });
+        };
+
+        ctrl.enableDrag = function () {
+            elem.find(".chatbot-main").draggable(draggableOptions);
+        };
 
         scope.$watch(() => ctrl.options.enable ? elem.find(".chatbot-messages")[0].scrollHeight : 0, (newV) => elem.find(".chatbot-messages").scrollTop(newV));
         scope.$watch(ctrl.hidden, (hidden) => !hidden ? elem.find("input.chatbot-input").focus() : null);

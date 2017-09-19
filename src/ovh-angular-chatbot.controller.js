@@ -151,6 +151,7 @@ class ChatbotCtrl {
             return null;
         }
         this.hidden = false;
+        this.enableDrag();
         this.newMsg = 0;
         return null;
     }
