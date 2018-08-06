@@ -1,4 +1,3 @@
-/* jshint jasmine:true */
 "use strict";
 describe("directive: chatbot", () => {
     beforeEach(angular.mock.module("chatbot"));
