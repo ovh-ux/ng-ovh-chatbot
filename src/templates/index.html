@@ -35,29 +35,12 @@
                     <div class="oui-message__body">
                         <div ng-class="{'chatbot-userText': msg.type === ctrl.MESSAGE_TYPES.user, 'chatbot-botText': msg.type === ctrl.MESSAGE_TYPES.bot};">
                             <span ng-if="msg.type === ctrl.MESSAGE_TYPES.bot" class="chatbot-textBold">Assistant virtuel OVH</span>
-                            <span ng-if="msg.type === ctrl.MESSAGE_TYPES.user" class="chatbot-textBold">vous</span>
+                            <span ng-if="msg.type === ctrl.MESSAGE_TYPES.user" class="chatbot-textBold">Vous</span>
                             <ng-embed class="oui-paragraph"
-                                 ng-repeat="txt in msg.message.split('\n') track by $index"
-                                 embed-data="txt"
+                                 embed-data="msg.message"
                                  embed-template-url="ng-ovh-chatbot-embedded-template.html"
-                                 embed-options="ctrl.NG_EMBED_OPTIONS"
-                                 ></ng-embed>
-                            <div ng-repeat="item in msg.items track by $index" class="chatbot-item">
-                                <div class="chatbot-item_title">{{item.title}}</div>
-                                <ng-embed class="chatbot-item_text oui-paragraph"
-                                     ng-repeat="itemTxt in item.text.split('\n') track by $index"
-                                     embed-data="itemTxt"
-                                     embed-template-url="ng-ovh-chatbot-embedded-template.html"
-                                     embed-options="ctrl.NG_EMBED_OPTIONS"
-                                     ></ng-embed>
-                            </div>
-                            <div class="chatbot-list oui-list">
-                                <ul class="oui-list__items">
-                                    <li class="oui-list__item chatbot-button" ng-repeat="button in msg.buttons track by $index">
-                                        <button class="oui-button oui-button_secondary" type="button" value="{{button.value}}" ng-click="ctrl.buttonClick(button)">{{button.text}}</button>
-                                    </li>
-                                 </ul>
-                             </div>
+                                 embed-options="ctrl.NG_EMBED_OPTIONS">
+                            </ng-embed>
                          </div>
                     </div>
                 </div>
@@ -68,7 +51,7 @@
                 </div>
             </div>
           </div>
-            <div ng-show="ctrl.processing && !ctrl.hidden"  class="chatbot-msgBox oui-message oui-message_info">
+            <div ng-if="ctrl.loaders.asking && !ctrl.hidden"  class="chatbot-msgBox oui-message oui-message_info">
                 <p class="oui-paragraph oui-message__body">
                     Traitement en cours
                 </p>
@@ -78,7 +61,7 @@
                     </div>
                 </div>
             </div>
-            <div ng-show="ctrl.error && !ctrl.hidden" class="chatbot-msgBox oui-message oui-message_error">
+            <div ng-if="ctrl.error && !ctrl.hidden" class="chatbot-msgBox oui-message oui-message_error">
                 <button class="oui-icon oui-icon-close oui-message__close-button" aria-hidden="true" type="button" ng-click="ctrl.error = null;"></button>
                 <p class="oui-paragraph oui-message__body">
                     Une erreur s'est produite, merci de réessayer ultérieurement.
@@ -109,7 +92,7 @@
             <div class="oui-loader__image"></div>
           </div>
         </div>
-        <button class="chatbot-icon_wrapper" ng-show="ctrl.messages.length || !ctrl.initialized" ng-click="ctrl.open()" type="button">
+        <button class="chatbot-icon_wrapper" ng-if="ctrl.messages.length || !ctrl.initialized" ng-click="ctrl.open()" type="button">
             <div class="chatbot-icon" aria-hidden="true">
                 <svg viewBox="0 0 32 32">
                     <use href="#chatbot-svg_bot"></use>

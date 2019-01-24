@@ -6,6 +6,7 @@ const config = configGenerator({
 
 export default [
   config.cjs(),
+  config.es(),
   config.umd({
     output: {
       globals: {

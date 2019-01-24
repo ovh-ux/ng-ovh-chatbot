@@ -1,31 +1,26 @@
 const fakeChatbotData = [
   {
-    type: 'user',
     message: 'Hello world!',
-    items: [],
-    buttons: [],
+    type: 'bot',
   },
 ];
 
 class ChatbotServiceProvider {
   constructor() {
     const self = this;
-    this.chatbotUrl = '/engine/2api/chatbot';
+    this.chatbotUrl = '/chatbot';
     this.$get = ['$http', '$q', ($http, $q) => {
       const chatbotService = {};
-      chatbotService.post = (message, type) => $q((resolve, reject) => $http({
+      chatbotService.post = message => $q((resolve, reject) => $http({
         method: 'POST',
         url: self.chatbotUrl,
         data: {
-          message,
-          type: type || 'message',
+          language: 'fr',
+          userInput: message,
         },
         serviceType: 'aapi',
         withCredentials: true,
       }).then(resolve, reject));
-      chatbotService.post = (message, type) => $q.when(true).then(() => ({
-        data: fakeChatbotData,
-      }));
 
       chatbotService.history = () => $q((resolve, reject) => $http({
         method: 'GET',
@@ -33,7 +28,7 @@ class ChatbotServiceProvider {
         serviceType: 'aapi',
         withCredentials: true,
       }).then(resolve, reject));
-      chatbotService.history = (message, type) => $q.when(true).then(() => ({ data: fakeChatbotData }));
+      chatbotService.history = message => $q.when(true).then(() => ({ data: fakeChatbotData }));
 
       return chatbotService;
     }];

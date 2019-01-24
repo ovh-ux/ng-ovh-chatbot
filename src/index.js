@@ -31,10 +31,10 @@ angular
   })
   .constant('CHATBOT_NGEMBED_OPTIONS', {
     watchEmbedData: true, // watch embed data and render on change
-    sanitizeHtml: true, // convert html to text
+    sanitizeHtml: false, // convert html to text
     fontSmiley: true, // convert ascii smileys into font smileys
     emoji: true, // convert emojis short names into images
-    link: true, // convert links into anchor tags
+    link: false, // convert links into anchor tags
     linkTarget: '_blank', // _blank|_self|_parent|_top|framename
     pdf: {
       embed: true, // show pdf viewer.
