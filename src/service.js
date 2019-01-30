@@ -1,6 +1,7 @@
 const fakeChatbotData = [
   {
-    message: 'Hello world!',
+    text: 'Hello world!',
+    time: '16:12',
     type: 'bot',
   },
 ];

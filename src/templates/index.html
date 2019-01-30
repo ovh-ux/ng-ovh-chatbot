@@ -1,105 +1,58 @@
 <div id="ng-ovh-chatbot">
     <ng-include src="'ng-ovh-chatbot-icons-template.html'"></ng-include>
-    <div class="chatbot-main" ng-hide="ctrl.hidden" ng-if="ctrl.options.enable">
-      <div class="chatbot-header">
-          <h6 class="chatbot-title oui-header_6" ng-hide="ctrl.hidden">
-              <span class="chatbot-back" ng-click="ctrl.close()">
-                  <svg viewBox="0 0 16 16">
-                      <use href="#chatbot-svg_back"></use>
-                  </svg>
-              </span>
-              <span class="chatbot-icon" aria-hidden="true">
-                    <svg viewBox="0 0 32 32">
-                        <use href="#chatbot-svg_bot"></use>
-                    </svg>
-              </span>
-              Assistance Virtuelle
-          </h6>
-          <span class="chatbot-close" aria-label="Fermer" ng-click="ctrl.close()" ng-hide="ctrl.hidden">
-              <svg viewBox="0 0 16 16">
-                  <use href="#chatbot-svg_close"></use>
-              </svg>
-          </span>
-      </div>
-      <hr class="chatbot-line chatbot-header-line" ng-hide="ctrl.hidden"></hr>
-      <div class="chatbot-body">
-          <div class="chatbot-messages " ng-hide="ctrl.hidden">
-            <div ng-repeat="msg in ctrl.messages track by $index" ng-if="msg.type !== ctrl.MESSAGE_TYPES.postback" ng-class="{'chatbot-right': msg.type === ctrl.MESSAGE_TYPES.user, 'chatbot-left': msg.type !== ctrl.MESSAGE_TYPES.user};">
-                <div ng-if="msg.type !== ctrl.MESSAGE_TYPES.user" class="chatbot-pp chatbot-pp_bot">
-                    <svg viewBox="0 0 20 20" class="chatbot-icon chatbot-icon_pp">
-                        <use href="#chatbot-svg_bot_small"></use>
-                    </svg>
-                </div>
-                <div class="oui-message oui-message_no-icon chatbot-message" ng-class="{'chatbot-user': msg.type === ctrl.MESSAGE_TYPES.user, 'chatbot-bot': msg.type !== ctrl.MESSAGE_TYPES.user};" id="chat-message-{{ctrl.messages.length - $index}}">
-                    <span class="chatbot-tip" ng-class="{'oui-tip-left': msg.type === ctrl.MESSAGE_TYPES.user, 'oui-tip-right': msg.type !== ctrl.MESSAGE_TYPES.user};" aria-hidden="true"></span>
-                    <div class="oui-message__body">
-                        <div ng-class="{'chatbot-userText': msg.type === ctrl.MESSAGE_TYPES.user, 'chatbot-botText': msg.type === ctrl.MESSAGE_TYPES.bot};">
-                            <span ng-if="msg.type === ctrl.MESSAGE_TYPES.bot" class="chatbot-textBold">Assistant virtuel OVH</span>
-                            <span ng-if="msg.type === ctrl.MESSAGE_TYPES.user" class="chatbot-textBold">Vous</span>
-                            <ng-embed class="oui-paragraph"
-                                 embed-data="msg.message"
-                                 embed-template-url="ng-ovh-chatbot-embedded-template.html"
-                                 embed-options="ctrl.NG_EMBED_OPTIONS">
-                            </ng-embed>
-                         </div>
-                    </div>
-                </div>
-                <div ng-if="msg.type === ctrl.MESSAGE_TYPES.user" class="chatbot-pp chatbot-pp_user">
-                    <svg viewBox="0 0 20 20" class="chatbot-icon chatbot-icon_pp">
-                        <use href="#chatbot-svg_user"></use>
-                    </svg>
-                </div>
-            </div>
-          </div>
-            <div ng-if="ctrl.loaders.asking && !ctrl.hidden"  class="chatbot-msgBox oui-message oui-message_info">
-                <p class="oui-paragraph oui-message__body">
-                    Traitement en cours
-                </p>
-                <div class="oui-loader oui-loader_s">
-                    <div class="oui-loader__container">
-                        <div class="oui-loader__image"></div>
+
+    <div class="chatbot-main"
+         data-ng-hide="ctrl.hidden"
+         data-ng-if="ctrl.options.enable">
+        <div class="chatbot-header">
+            <h6>OVH Chat</h6>
+        </div>
+        <div class="chatbot-body">
+            <div class="chatbot-messages">
+                <div class="chatbot-message"
+                    data-ng-repeat="message in ctrl.messages track by $index"
+                    data-ng-if="message.type !== ctrl.MESSAGE_TYPES.postback"
+                    data-ng-class="{'chatbot-message-user': message.type === ctrl.MESSAGE_TYPES.user,
+                                    'chatbot-message-bot': message.type !== ctrl.MESSAGE_TYPES.user}">
+                    <div class="chatbot-avatar" data-ng-if="message.type === ctrl.MESSAGE_TYPES.bot"></div>
+                    <div class="chatbot-time" data-ng-bind="message.time"></div>
+                    <div class="chatbot-text">
+                        <ng-embed data-embed-data="message.text"
+                                data-embed-template-url="ng-ovh-chatbot-embedded-template.html"
+                                data-embed-options="ctrl.NG_EMBED_OPTIONS">
+                        </ng-embed>
                     </div>
                 </div>
             </div>
-            <div ng-if="ctrl.error && !ctrl.hidden" class="chatbot-msgBox oui-message oui-message_error">
-                <button class="oui-icon oui-icon-close oui-message__close-button" aria-hidden="true" type="button" ng-click="ctrl.error = null;"></button>
-                <p class="oui-paragraph oui-message__body">
-                    Une erreur s'est produite, merci de réessayer ultérieurement.
-                </p>
-            </div>
-          <hr class="chatbot-line" ng-hide="ctrl.hidden"></hr>
-          <div class="chatbot-user-input" ng-hide="ctrl.hidden">
-            <div class="chatbot-input-group oui-input-group">
-              <input class="chatbot-input oui-input" type="text" name="message" ng-model="ctrl.message" autofocus="autofocus" ng-keyup="$event.keyCode == 13 && ctrl.ask()" ng-disabled="!ctrl.messages.length" placeholder="Votre message..." autofocus="autofocus">
-              <button class="chatbot-button oui-button oui-button_primary" type="button" ng-click="ctrl.ask()" ng-disabled="!ctrl.messages.length || !ctrl.message.length">
-                      <svg viewBox="0 0 18 20" class="chatbot-send-button">
-                          <use href="#chatbot-svg_paperplane"></use>
-                      </svg>
-              </button>
-            </div>
-          </div>
+        </div>
+        <div class="chatbot-footer">
+            <form data-ng-submit="ctrl.ask()">
+                <textarea name="message"
+                        rows="1"
+                        autofocus="autofocus"
+                        placeholder="Votre message..."
+                        data-ng-model="ctrl.message"
+                        data-ng-keyup="$event.keyCode == 13 && ctrl.ask()"
+                        data-ng-disabled="!ctrl.messages.length"></textarea>
+                <button type="submit"
+                        value="Ok"
+                        data-ng-disabled="!ctrl.messages.length || !ctrl.message.length">
+                </button>
+            </form>
         </div>
     </div>
 
-    <div class="chatbot-msgBox_init oui-message oui-message_error" ng-if="ctrl.initialized && ctrl.error && !ctrl.messages.length">
-        <button type="button" class="oui-icon oui-icon-close oui-message__close-button" aria-hidden="true" ng-click="ctrl.error = null; ctrl.initialized = false"></button>
-        <p class="oui-paragraph oui-message__body">Impossible de démarrer le chatbot. Veuillez essayer plus tard</p>
-    </div>
     <div class="chatbot-open" ng-hide="!ctrl.hidden || (ctrl.error && !ctrl.messages.length)" ng-if="ctrl.options.enable">
         <span class="chatbot-notification oui-paragraph" aria-hidden="true" ng-hide="!ctrl.newMsg">{{ctrl.newMsg > 9 ? '+' : ctrl.newMsg}}</span>
         <div class="oui-loader oui-loader_s" ng-if="!ctrl.messages.length && ctrl.initialized && !ctrl.error">
-          <div class="oui-loader__container chatbot-loader">
-            <div class="oui-loader__image"></div>
-          </div>
+            <div class="oui-loader__container chatbot-loader">
+                <div class="oui-loader__image"></div>
+            </div>
         </div>
         <button class="chatbot-icon_wrapper" ng-if="ctrl.messages.length || !ctrl.initialized" ng-click="ctrl.open()" type="button">
             <div class="chatbot-icon" aria-hidden="true">
-                <svg viewBox="0 0 32 32">
-                    <use href="#chatbot-svg_bot"></use>
-                </svg>
             </div>
         </button>
     </div>
-
 
 </div>

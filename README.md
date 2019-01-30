@@ -17,11 +17,8 @@ In your `index.html`:
 <!-- ng-ovh-chatbot -->
 <script src="ng-ovh-chatbot/dist/index.min.js"></script>
 
-<!-- place it anywhere (if you want to use the default) -->
+<!-- place it anywhere -->
 <ovh-chatbot></ovh-chatbot>
-
-<!-- place it anywhere (if you want to configure the pull rate) -->
-<ovh-chatbot pull="2"></ovh-chatbot>
 ```
 
 In your `app.js`:

@@ -40,11 +40,11 @@ class ChatbotCtrl {
   }
 
   pushUserMessage(text) {
-    this.messages.push({ message: text, type: this.MESSAGE_TYPES.user });
+    this.messages.push({ text, type: this.MESSAGE_TYPES.user, time: '22:47' });
   }
 
   pushBotMessage(data) {
-    this.messages.push({ message: data.text, type: this.MESSAGE_TYPES.bot });
+    this.messages.push({ text: data.text, type: this.MESSAGE_TYPES.bot, time: '23:15' });
   }
 
   ask() {
