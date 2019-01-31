@@ -5,6 +5,11 @@
          data-ng-hide="ctrl.hidden"
          data-ng-if="ctrl.options.enable">
         <div class="chatbot-header">
+            <button data-ng-click="ctrl.close()" type="button">
+                <svg viewbox="0 0 24 24">
+                    <use href="#chatbot-svg-close">
+                </svg>
+            </button>
             <h6>OVH Chat</h6>
         </div>
         <div class="chatbot-body">
@@ -34,7 +39,7 @@
                 <textarea name="message"
                           rows="1"
                           autofocus="autofocus"
-                          placeholder="Votre message..."
+                          placeholder="Saisissez votre question..."
                           data-ng-model="ctrl.message"
                           data-ng-keyup="$event.keyCode == 13 && ctrl.ask()">
                 </textarea>
