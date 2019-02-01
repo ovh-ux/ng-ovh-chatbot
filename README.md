@@ -35,17 +35,15 @@ angular
 // if you want to use a custom url:
 
 angular
-  .module("myApp")
-  .config(["chatbotServiceProvider", function(chatbotServiceProvider) {
-    chatbotServiceProvider.setChatbotUrl("you.re/url/here");
-}]);
+  .module('myApp')
+  .config(/* @ngInject */(ChatbotService) => {
+    ChatbotService.setChatbotUrl("/url/to/the/chatbot");
+  });
 ```
 
 ## Tips
 
-* The notifications have the icon of the file located at : '/img/notification.png'.
 * The chatbot div is automatically placed in the bottom right of the page.
-* The parent container must at least be 100vw x 100vh for the draggable feature to work properly.
 
 ### ovh-angular-user-pref:
 

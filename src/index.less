@@ -35,7 +35,7 @@
 
 @chatbot-smallscreen: ~"only screen and (max-width: 767px) ";
 
-#ng-ovh-chatbot {
+ovh-chatbot {
   font-family: @chatbot-font-family;
 
   button {
@@ -50,6 +50,29 @@
     }
   }
 
+  .chatbot-floating-button {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    min-width: @chatbot-floating-button-height;
+    height: @chatbot-floating-button-height;
+    margin: @chatbot-margin;
+    z-index: 9998;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-style: solid;
+    border-radius: 40px;
+    border-color: @chatbot-primary-color;
+    background: @chatbot-primary-color;
+
+    button {
+      padding: 10px;
+      color: #fff;
+      font-weight: bold;
+    }
+  }
+
   .chatbot-main {
     position: fixed;
     height: @chatbot-height;
@@ -60,7 +83,6 @@
     background-color: @chatbot-bg-color;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
     border-radius: @chatbot-border-radius;
-
     z-index: 9999;
 
     .chatbot-header {
@@ -69,8 +91,7 @@
       align-items: center;
       height: @chatbot-header-height;
       border-radius: @chatbot-border-radius @chatbot-border-radius 0 0;
-
-      background-color: @chatbot-header-bg-color1;
+      background: @chatbot-header-bg-color1;
       background: radial-gradient(circle at bottom left, @chatbot-header-bg-color1, @chatbot-header-bg-color2);
 
       button {
@@ -177,6 +198,7 @@
           right: 18px;
           width: @chatbot-send-button-size;
           height: @chatbot-send-button-size;
+
           svg {
             width: @chatbot-send-button-size;
             height: @chatbot-send-button-size;
@@ -206,32 +228,6 @@
           left: 8px;
         }
       }
-    }
-  }
-
-  .chatbot-floating-button {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    min-width: @chatbot-floating-button-height;
-    height: @chatbot-floating-button-height;
-    margin: @chatbot-margin;
-
-    z-index: 9998;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-style: solid;
-    border-radius: 40px;
-    border-color: @chatbot-primary-color;
-    background: @chatbot-primary-color;
-
-    button {
-      padding: 10px;
-      color: #fff;
-      font-weight: bold;
     }
   }
 }

@@ -1,73 +1,65 @@
-<div id="ng-ovh-chatbot">
-    <ng-include src="'ng-ovh-chatbot-icons-template.html'"></ng-include>
+<ovh-chatbot-icons></ovh-chatbot-icons>
 
-    <div class="chatbot-main"
-         data-ng-hide="ctrl.hidden"
-         data-ng-if="ctrl.options.enable">
-        <div class="chatbot-header">
-            <button data-ng-click="ctrl.close()" type="button">
-                <svg viewbox="0 0 24 24">
-                    <use href="#chatbot-svg-close">
-                </svg>
-            </button>
-            <h6>OVH Chat</h6>
-        </div>
-        <div class="chatbot-body">
-            <div class="chatbot-messages">
-                <div class="chatbot-message"
-                    data-ng-repeat="message in ctrl.messages track by $index"
-                    data-ng-if="message.type !== ctrl.MESSAGE_TYPES.postback"
-                    data-ng-class="{'chatbot-message-user': message.type === ctrl.MESSAGE_TYPES.user,
-                                    'chatbot-message-bot': message.type !== ctrl.MESSAGE_TYPES.user}">
-                    <div class="chatbot-avatar" data-ng-if="message.type === ctrl.MESSAGE_TYPES.bot">
-                        <svg viewbox="0 0 32 32">
-                            <use href="#chatbot-svg-avatar">
-                        </svg>
-                    </div>
-                    <div class="chatbot-time" data-ng-bind="message.time"></div>
-                    <div class="chatbot-text">
-                        <ng-embed data-embed-data="message.text"
-                                data-embed-template-url="ng-ovh-chatbot-embedded-template.html"
-                                data-embed-options="ctrl.NG_EMBED_OPTIONS">
-                        </ng-embed>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="chatbot-footer">
-            <form>
-                <textarea name="message"
-                          rows="1"
-                          autofocus="autofocus"
-                          placeholder="Saisissez votre question..."
-                          data-ng-model="ctrl.message"
-                          data-ng-keyup="$event.keyCode == 13 && ctrl.ask()">
-                </textarea>
-                <button data-ng-click="ctrl.ask()"
-                        data-ng-disabled="!ctrl.message.length">
-                    <svg viewbox="0 0 24 24" data-ng-if="!ctrl.message.length">
-                        <use href="#chatbot-svg-disabled-paperplane">
-                    </svg>
-                    <svg viewbox="0 0 24 24" data-ng-if="ctrl.message.length">
-                        <use href="#chatbot-svg-paperplane">
-                    </svg>
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <div class="chatbot-floating-button" data-ng-if="ctrl.options.enable && ctrl.hidden">
-        <button data-ng-click="ctrl.open()" type="button">
-            Besoin d'aide ?
-        </button>
-    </div>
-
-    <div class="chatbot-floating-button" data-ng-if="ctrl.options.enable && !ctrl.hidden">
-        <button data-ng-click="ctrl.close()" type="button">
+<div class="chatbot-main"
+        data-ng-hide="$ctrl.hidden"
+        data-ng-if="$ctrl.options.enable">
+    <div class="chatbot-header">
+        <button data-ng-click="$ctrl.close()" type="button">
             <svg viewbox="0 0 24 24">
-                <use href="#chatbot-svg-close">
+                <use href="#chatbot-svg-close" />
             </svg>
         </button>
+        <h6 data-translate="chatbot_title"></h6>
     </div>
+    <div class="chatbot-body">
+        <div class="chatbot-messages">
+            <div class="chatbot-message"
+                data-ng-repeat="message in $ctrl.messages track by $index"
+                data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.postback"
+                data-ng-class="{'chatbot-message-user': message.type === $ctrl.MESSAGE_TYPES.user,
+                                'chatbot-message-bot': message.type !== $ctrl.MESSAGE_TYPES.user}">
+                <div class="chatbot-avatar" data-ng-if="message.type === $ctrl.MESSAGE_TYPES.bot">
+                    <svg viewbox="0 0 32 32">
+                        <use href="#chatbot-svg-avatar" />
+                    </svg>
+                </div>
+                <div class="chatbot-time" data-ng-bind="message.time"></div>
+                <div class="chatbot-text" data-ng-bind-html="message.text"></div>
+            </div>
+        </div>
+    </div>
+    <div class="chatbot-footer">
+        <form data-ng-submit="$ctrl.ask()">
+            <textarea name="message"
+                      rows="1"
+                      autofocus="autofocus"
+                      placeholder="{{:: 'chatbot_input_placeholder' | translate }}"
+                      data-ng-model="$ctrl.message"
+                      data-ng-keyup="$event.keyCode == 13 && $ctrl.ask()">
+            </textarea>
+            <button type="submit"
+                    data-ng-disabled="!$ctrl.message.length">
+                <svg viewbox="0 0 24 24" data-ng-if="!$ctrl.message.length">
+                    <use href="#chatbot-svg-disabled-paperplane" />
+                </svg>
+                <svg viewbox="0 0 24 24" data-ng-if="$ctrl.message.length">
+                    <use href="#chatbot-svg-paperplane" />
+                </svg>
+            </button>
+        </form>
+    </div>
+</div>
 
+<div class="chatbot-floating-button" data-ng-if="$ctrl.options.enable && $ctrl.hidden">
+    <button data-ng-click="$ctrl.open()" type="button">
+        <span data-translate="chatbot_button_open"></span>
+    </button>
+</div>
+
+<div class="chatbot-floating-button" data-ng-if="$ctrl.options.enable && !$ctrl.hidden">
+    <button data-ng-click="$ctrl.close()" type="button">
+        <svg viewbox="0 0 24 24">
+            <use href="#chatbot-svg-close" />
+        </svg>
+    </button>
 </div>

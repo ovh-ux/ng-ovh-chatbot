@@ -1,6 +1,6 @@
 {
   "name": "ng-ovh-chatbot",
-  "version": "2.0.0",
+  "version": "1.0.4",
   "description": "OVH chatbot component for Angular",
   "keywords": [
     "ovh",
@@ -30,14 +30,11 @@
     "version": "npx conventional-changelog-cli -p angular -i CHANGELOG.md -s && git add CHANGELOG.md",
     "postversion": "git push && git push --tags"
   },
-  "dependencies": {
-    "ovh-ui-kit": "^2.23.0",
-    "simple-web-notification": "^1.0.31"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
     "@commitlint/config-angular": "^7.1.2",
-    "@ovh-ux/component-rollup-config": "^5.0.0-beta.1",
+    "@ovh-ux/component-rollup-config": "^5.0.0-beta.5",
     "eslint": "^5.9.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-formatter-pretty": "^2.0.0",
@@ -51,10 +48,10 @@
     "stylelint-config-standard": "^18.2.0"
   },
   "peerDependencies": {
+    "@ovh-ux/ng-ovh-user-pref": "^1.0.0-beta.0",
+    "@ovh-ux/translate-async-loader": "^2.0.0",
     "angular": "^1.6.4",
-    "angular-animate": "^1.4.0",
-    "jquery-ui": "^1.12.1",
-    "ng-embed": "^2.2.0",
-    "ovh-angular-user-pref": "^0.3.1"
+    "angular-translate": "^2.11.0",
+    "jquery-ui": "^1.12.1"
   }
 }

@@ -1,21 +1,18 @@
 class ChatbotCtrl {
+  /* @ngInject */
   constructor(
     $translate,
-    chatbotService,
+    ChatbotService,
     ovhUserPref,
     CHATBOT_MESSAGE_TYPES,
-    CHATBOT_NGEMBED_OPTIONS,
   ) {
     this.$translate = $translate;
-    this.chatbotService = chatbotService;
+    this.ChatbotService = ChatbotService;
     this.ovhUserPref = ovhUserPref;
     this.MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
-    this.NG_EMBED_OPTIONS = CHATBOT_NGEMBED_OPTIONS;
-
-    this.init();
   }
 
-  init() {
+  $onInit() {
     this.error = false;
     this.started = false;
     this.hidden = true;
@@ -29,6 +26,14 @@ class ChatbotCtrl {
     this.options = {
       notifications: false,
       enable: false,
+    };
+
+    this.enableDrag = () => {
+      this.boundElement.find('.chatbot-main').draggable({
+        handle: '.chatbot-header',
+        cursor: 'move',
+        containment: 'window',
+      });
     };
 
     this.ovhUserPref
@@ -57,19 +62,18 @@ class ChatbotCtrl {
 
     this.pushUserMessage(this.message);
 
-    this.chatbotService
+    this.ChatbotService
       .post(this.message)
-      .then((result) => {
-        this.pushBotMessage(result.data);
+      .then(({ data }) => {
+        this.pushBotMessage(data);
       })
       .catch(() => {
         this.error = true;
       })
       .finally(() => {
         this.loaders.asking = false;
+        this.message = '';
       });
-
-    this.message = '';
   }
 
   close() {
@@ -98,11 +102,10 @@ class ChatbotCtrl {
     this.started = true;
     this.loaders.starting = true;
 
-    this.chatbotService
+    this.ChatbotService
       .history()
-      .then((result) => {
-        this.messages = result.data;
-        this.loaders.starting = false;
+      .then(({ data }) => {
+        this.messages = data;
         this.open();
       })
       .catch(() => {

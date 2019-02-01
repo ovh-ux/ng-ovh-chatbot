@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translations>
+   <translation id="chatbot_title">OVH Chat</translation>
+   <translation id="chatbot_input_placeholder">Saisissez votre question…</translation>
+   <translation id="chatbot_button_open">Besoin d'aide ?</translation>
+</translations>

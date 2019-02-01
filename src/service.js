@@ -1,38 +1,34 @@
-const fakeChatbotData = [
-  {
-    text: 'Hello world!',
-    time: '16:12',
-    type: 'bot',
-  },
-];
-
-class ChatbotServiceProvider {
-  constructor() {
-    const self = this;
+class ChatbotService {
+  /* @ngInject */
+  constructor($http, $q) {
+    this.$http = $http;
+    this.$q = $q;
     this.chatbotUrl = '/chatbot';
-    this.$get = ['$http', '$q', ($http, $q) => {
-      const chatbotService = {};
-      chatbotService.post = message => $q((resolve, reject) => $http({
-        method: 'POST',
-        url: self.chatbotUrl,
-        data: {
-          language: 'fr',
-          userInput: message,
+  }
+
+  post(userInput) {
+    return this.$http({
+      method: 'POST',
+      url: this.chatbotUrl,
+      data: {
+        language: 'fr',
+        userInput,
+      },
+      serviceType: 'aapi',
+      withCredentials: true,
+    });
+  }
+
+  history() {
+    return this.$q.when(true).then(() => ({
+      data: [
+        {
+          text: 'Hello world!',
+          time: '16:12',
+          type: 'bot',
         },
-        serviceType: 'aapi',
-        withCredentials: true,
-      }).then(resolve, reject));
-
-      chatbotService.history = () => $q((resolve, reject) => $http({
-        method: 'GET',
-        url: self.chatbotUrl,
-        serviceType: 'aapi',
-        withCredentials: true,
-      }).then(resolve, reject));
-      chatbotService.history = message => $q.when(true).then(() => ({ data: fakeChatbotData }));
-
-      return chatbotService;
-    }];
+      ],
+    }));
   }
 
   setChatbotUrl(url) {
@@ -44,4 +40,4 @@ class ChatbotServiceProvider {
   }
 }
 
-export default ChatbotServiceProvider;
+export default ChatbotService;
