@@ -13,7 +13,6 @@ class ChatbotCtrl {
   }
 
   $onInit() {
-    this.error = false;
     this.started = false;
     this.hidden = true;
     this.messages = [];
@@ -48,8 +47,17 @@ class ChatbotCtrl {
     this.messages.push({ text, type: this.MESSAGE_TYPES.user, time: '22:47' });
   }
 
-  pushBotMessage(data) {
-    this.messages.push({ text: data.text, type: this.MESSAGE_TYPES.bot, time: '23:15' });
+  pushPostbackMessage(text) {
+    this.messages.push({ text, type: this.MESSAGE_TYPES.postback, time: '21:17' });
+  }
+
+  pushBotMessage({ text, rewords }) {
+    this.messages.push({
+      text,
+      type: this.MESSAGE_TYPES.bot,
+      time: '23:15',
+      rewords,
+    });
   }
 
   ask() {
@@ -57,22 +65,33 @@ class ChatbotCtrl {
       return;
     }
 
-    this.error = null;
     this.loaders.asking = true;
-
-    this.pushUserMessage(this.message);
-
-    this.ChatbotService
-      .post(this.message)
-      .then(({ data }) => {
-        this.pushBotMessage(data);
-      })
-      .catch(() => {
-        this.error = true;
-      })
+    this.postMessage(this.message)
       .finally(() => {
         this.loaders.asking = false;
         this.message = '';
+      });
+  }
+
+  postback(postbackMessage) {
+    this.loaders.asking = true;
+    this.postMessage(postbackMessage.text, true)
+      .finally(() => {
+        this.loaders.asking = false;
+      });
+  }
+
+  postMessage(text, isPostback) {
+    if (isPostback) {
+      this.pushPostbackMessage(text);
+    } else {
+      this.pushUserMessage(text);
+    }
+
+    return this.ChatbotService
+      .post(text)
+      .then((botMessage) => {
+        this.pushBotMessage(botMessage);
       });
   }
 
@@ -107,9 +126,6 @@ class ChatbotCtrl {
       .then(({ data }) => {
         this.messages = data;
         this.open();
-      })
-      .catch(() => {
-        this.error = true;
       })
       .finally(() => {
         this.loaders.starting = false;

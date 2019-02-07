@@ -16,7 +16,7 @@ class ChatbotService {
       },
       serviceType: 'aapi',
       withCredentials: true,
-    });
+    }).then(({ data }) => data);
   }
 
   history() {

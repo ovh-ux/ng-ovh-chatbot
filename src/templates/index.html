@@ -24,7 +24,17 @@
                     </svg>
                 </div>
                 <div class="chatbot-time" data-ng-bind="message.time"></div>
-                <div class="chatbot-text" data-ng-bind-html="message.text"></div>
+                <div class="chatbot-text">
+                    <span data-ng-bind-html="message.text"></span>
+                    <ul data-ng-if="message.rewords.length">
+                        <li data-ng-repeat="reword in message.rewords track by $index">
+                            <a href="#"
+                               data-ng-click="$ctrl.postback(reword)"
+                               data-ng-bind="reword.text">
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
