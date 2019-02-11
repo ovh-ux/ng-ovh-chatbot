@@ -6,13 +6,14 @@ class ChatbotService {
     this.chatbotUrl = '/chatbot';
   }
 
-  post(userInput) {
+  post(userInput, options = {}) {
     return this.$http({
       method: 'POST',
       url: this.chatbotUrl,
       data: {
         language: 'fr',
         userInput,
+        ...options,
       },
       serviceType: 'aapi',
       withCredentials: true,

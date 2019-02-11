@@ -75,13 +75,13 @@ class ChatbotCtrl {
 
   postback(postbackMessage) {
     this.loaders.asking = true;
-    this.postMessage(postbackMessage.text, true)
+    this.postMessage(postbackMessage.text, postbackMessage.options, true)
       .finally(() => {
         this.loaders.asking = false;
       });
   }
 
-  postMessage(text, isPostback) {
+  postMessage(text, options, isPostback) {
     if (isPostback) {
       this.pushPostbackMessage(text);
     } else {
@@ -89,7 +89,7 @@ class ChatbotCtrl {
     }
 
     return this.ChatbotService
-      .post(text)
+      .post(text, options)
       .then((botMessage) => {
         this.pushBotMessage(botMessage);
       });
