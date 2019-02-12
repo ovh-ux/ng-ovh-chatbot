@@ -43,20 +43,10 @@ class ChatbotCtrl {
       .catch(() => this.ovhUserPref.assign('CHATBOT_PREF', this.options));
   }
 
-  pushUserMessage(text) {
-    this.messages.push({ text, type: this.MESSAGE_TYPES.user, time: '22:47' });
-  }
-
-  pushPostbackMessage(text) {
-    this.messages.push({ text, type: this.MESSAGE_TYPES.postback, time: '21:17' });
-  }
-
-  pushBotMessage({ text, rewords }) {
+  pushMessageToUI(message, type) {
     this.messages.push({
-      text,
-      type: this.MESSAGE_TYPES.bot,
-      time: '23:15',
-      rewords,
+      ...message,
+      type,
     });
   }
 
@@ -81,17 +71,16 @@ class ChatbotCtrl {
       });
   }
 
-  postMessage(text, options, isPostback) {
-    if (isPostback) {
-      this.pushPostbackMessage(text);
-    } else {
-      this.pushUserMessage(text);
-    }
+  postMessage(messageText, options, isPostback) {
+    this.pushMessageToUI(
+      { text: messageText, time: moment().format('LT') },
+      isPostback ? this.MESSAGE_TYPES.postback : this.MESSAGE_TYPES.user,
+    );
 
     return this.ChatbotService
-      .post(text, options)
-      .then((botMessage) => {
-        this.pushBotMessage(botMessage);
+      .post(messageText, options)
+      .then(({ text, serverTime }) => {
+        this.pushMessageToUI({ text, time: moment(serverTime).format('LT') }, this.MESSAGE_TYPES.bot);
       });
   }
 
