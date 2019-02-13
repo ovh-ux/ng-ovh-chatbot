@@ -1,35 +1,55 @@
 class ChatbotService {
   /* @ngInject */
-  constructor($http, $q) {
+  constructor($http, $q, CHATBOT_MESSAGE_TYPES) {
     this.$http = $http;
     this.$q = $q;
+    this.CHATBOT_MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
+
     this.chatbotUrl = '/chatbot';
   }
 
-  post(userInput, options = {}) {
+  post(userInput, contextId, extraParameters = {}) {
     return this.$http({
       method: 'POST',
       url: this.chatbotUrl,
       data: {
+        contextId,
         language: 'fr',
         userInput,
-        ...options,
+        extraParameters,
       },
       serviceType: 'aapi',
       withCredentials: true,
     }).then(({ data }) => data);
   }
 
-  history() {
-    return this.$q.when(true).then(() => ({
-      data: [
-        {
-          text: 'Hello world!',
-          time: '16:12',
-          type: 'bot',
+  history(contextId) {
+    return this.$http({
+      method: 'GET',
+      url: this.chatbotUrl,
+      params: { contextId },
+      serviceType: 'aapi',
+      withCredentials: true,
+    })
+      .then(({ data }) => data)
+      .then(({ interactions }) => interactions.reduce(
+        (messages, interaction) => {
+          const date = moment(interaction.date, 'DD/MM/YYYY HH:mm:ss');
+          messages.push({
+            text: interaction.user,
+            time: date.format('LT'),
+            type: this.CHATBOT_MESSAGE_TYPES.user,
+          });
+          messages.push({
+            text: interaction.text,
+            rewords: interaction.rewords,
+            time: date.format('LT'),
+            type: this.CHATBOT_MESSAGE_TYPES.bot,
+          });
+          return messages;
         },
-      ],
-    }));
+        [],
+      ));
   }
 
   setChatbotUrl(url) {

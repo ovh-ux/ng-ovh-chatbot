@@ -1,11 +1,13 @@
 class ChatbotCtrl {
   /* @ngInject */
   constructor(
+    $scope,
     $translate,
     ChatbotService,
     ovhUserPref,
     CHATBOT_MESSAGE_TYPES,
   ) {
+    this.$scope = $scope;
     this.$translate = $translate;
     this.ChatbotService = ChatbotService;
     this.ovhUserPref = ovhUserPref;
@@ -25,14 +27,6 @@ class ChatbotCtrl {
     this.options = {
       notifications: false,
       enable: false,
-    };
-
-    this.enableDrag = () => {
-      this.boundElement.find('.chatbot-main').draggable({
-        handle: '.chatbot-header',
-        cursor: 'move',
-        containment: 'window',
-      });
     };
 
     this.ovhUserPref
@@ -78,9 +72,13 @@ class ChatbotCtrl {
     );
 
     return this.ChatbotService
-      .post(messageText, options)
-      .then(({ text, serverTime }) => {
-        this.pushMessageToUI({ text, time: moment(serverTime).format('LT') }, this.MESSAGE_TYPES.bot);
+      .post(messageText, this.constructor.getContextId(), options)
+      .then((botMessage) => {
+        this.constructor.saveContextId(botMessage.contextId);
+        this.pushMessageToUI(
+          { ...botMessage, time: moment(botMessage.serverTime).format('LT') },
+          this.MESSAGE_TYPES.bot,
+        );
       });
   }
 
@@ -89,36 +87,64 @@ class ChatbotCtrl {
   }
 
   open() {
-    if (!this.started) {
-      return this.start();
-    }
-
-    if (!this.messages.length) {
-      return null;
-    }
-
-    this.hidden = false;
-    this.enableDrag();
-    return null;
-  }
-
-  start() {
     if (!this.options.enable) {
       return;
     }
 
-    this.started = true;
-    this.loaders.starting = true;
+    if (!this.started) {
+      this.start();
+    }
 
-    this.ChatbotService
-      .history()
-      .then(({ data }) => {
-        this.messages = data;
-        this.open();
-      })
-      .finally(() => {
-        this.loaders.starting = false;
-      });
+    this.hidden = false;
+  }
+
+  start() {
+    this.started = true;
+
+    this.enableDrag();
+    this.enableScroll();
+
+    const contextId = this.constructor.getContextId();
+
+    if (contextId) {
+      this.loaders.starting = true;
+      this.ChatbotService
+        .history(contextId)
+        .then((messages) => {
+          this.messages = messages;
+        })
+        .finally(() => {
+          this.loaders.starting = false;
+        });
+    } else {
+      this.pushMessageToUI({
+        text: 'Bonjour ! Cela va déchirer :)',
+        time: moment().format('LT'),
+      }, this.MESSAGE_TYPES.bot);
+    }
+  }
+
+  enableDrag() {
+    this.boundElement.find('.chatbot-main').draggable({
+      handle: '.chatbot-header',
+      cursor: 'move',
+      containment: 'window',
+    });
+  }
+
+  enableScroll() {
+    this.$scope.$watch(
+      () => this.boundElement.find('.chatbot-messages')[0].scrollHeight,
+      newY => this.boundElement.find('.chatbot-body').scrollTop(newY),
+    );
+  }
+
+  static getContextId() {
+    return localStorage.getItem('ovhChatbotContextId');
+  }
+
+  static saveContextId(id) {
+    localStorage.setItem('ovhChatbotContextId', id);
   }
 }
 

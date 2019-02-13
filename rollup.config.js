@@ -13,6 +13,7 @@ export default [
         '@ovh-ux/translate-async-loader': 'translate-async-loader',
         angular: 'angular',
         'angular-translate': 'translate',
+        moment: 'moment',
       },
     },
   }),
