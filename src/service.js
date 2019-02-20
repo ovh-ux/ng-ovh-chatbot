@@ -13,7 +13,7 @@ class ChatbotService {
       method: 'POST',
       url: this.chatbotUrl,
       data: {
-        contextId,
+        contextId: contextId || '',
         language: 'fr',
         userInput,
         extraParameters,
@@ -27,7 +27,7 @@ class ChatbotService {
     return this.$http({
       method: 'GET',
       url: this.chatbotUrl,
-      params: { contextId },
+      params: { contextId: contextId || '' },
       serviceType: 'aapi',
       withCredentials: true,
     })

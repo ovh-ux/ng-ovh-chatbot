@@ -1,12 +1,14 @@
 class ChatbotCtrl {
   /* @ngInject */
   constructor(
+    $q,
     $scope,
     $translate,
     ChatbotService,
     ovhUserPref,
     CHATBOT_MESSAGE_TYPES,
   ) {
+    this.$q = $q;
     this.$scope = $scope;
     this.$translate = $translate;
     this.ChatbotService = ChatbotService;
@@ -82,6 +84,19 @@ class ChatbotCtrl {
       });
   }
 
+  welcome() {
+    return {
+      text: this.$translate.instant('chatbot_welcome_message'),
+      time: moment().format('LT'),
+      type: this.MESSAGE_TYPES.bot,
+      rewords: [
+        { text: 'Comment payer ?', options: {} },
+        { text: 'Comment consulter ma facture ?', options: {} },
+        { text: 'Que faire si on site web dysfonctionne ?', options: {} },
+      ],
+    };
+  }
+
   close() {
     this.hidden = true;
   }
@@ -99,29 +114,24 @@ class ChatbotCtrl {
   }
 
   start() {
-    this.started = true;
+    return this.$q.when(true)
+      .then(() => {
+        this.started = true;
 
-    this.enableDrag();
-    this.enableScroll();
+        this.enableDrag();
+        this.enableScroll();
 
-    const contextId = this.constructor.getContextId();
+        const contextId = this.constructor.getContextId();
+        this.loaders.starting = true;
 
-    if (contextId) {
-      this.loaders.starting = true;
-      this.ChatbotService
-        .history(contextId)
-        .then((messages) => {
-          this.messages = messages;
-        })
-        .finally(() => {
-          this.loaders.starting = false;
-        });
-    } else {
-      this.pushMessageToUI({
-        text: 'Bonjour ! Cela va déchirer :)',
-        time: moment().format('LT'),
-      }, this.MESSAGE_TYPES.bot);
-    }
+        return contextId ? this.ChatbotService.history(contextId) : [];
+      })
+      .then((messages) => {
+        this.messages = messages.length > 0 ? messages : [this.welcome()];
+      })
+      .finally(() => {
+        this.loaders.starting = false;
+      });
   }
 
   enableDrag() {
@@ -144,7 +154,9 @@ class ChatbotCtrl {
   }
 
   static saveContextId(id) {
-    localStorage.setItem('ovhChatbotContextId', id);
+    if (id) {
+      localStorage.setItem('ovhChatbotContextId', id);
+    }
   }
 }
 
