@@ -73,6 +73,14 @@ ovh-chatbot {
     }
   }
 
+  .chatbot-reduced {
+    border-width: 0px;
+    background: @chatbot-header-bg-color1;
+    background: radial-gradient(circle at bottom right, @chatbot-header-bg-color1, @chatbot-header-bg-color2);
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
   .chatbot-main {
     position: fixed;
     height: @chatbot-height;
@@ -228,6 +236,17 @@ ovh-chatbot {
           left: 8px;
         }
       }
+    }
+
+    .chatbot-reduced {
+      width: 100%;
+      bottom: 0;
+      left: 0;
+      right: auto;
+      border-radius: 0;
+      margin: 0;
+      display: flex;
+      justify-content: space-between;
     }
   }
 }

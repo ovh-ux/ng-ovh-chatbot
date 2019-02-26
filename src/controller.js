@@ -101,6 +101,11 @@ class ChatbotCtrl {
     this.hidden = true;
   }
 
+  fullClose() {
+    this.hidden = true;
+    this.started = false;
+  }
+
   open() {
     if (!this.options.enable) {
       return;

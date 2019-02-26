@@ -18,6 +18,9 @@ class ChatbotService {
         userInput,
         extraParameters,
       },
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
       serviceType: 'aapi',
       withCredentials: true,
     }).then(({ data }) => data);
@@ -28,6 +31,9 @@ class ChatbotService {
       method: 'GET',
       url: this.chatbotUrl,
       params: { contextId: contextId || '' },
+      headers: {
+        'Content-Type': 'application/json;charset=utf-8',
+      },
       serviceType: 'aapi',
       withCredentials: true,
     })

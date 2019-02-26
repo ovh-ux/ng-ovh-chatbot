@@ -29,7 +29,7 @@
                     <ul data-ng-if="message.rewords.length">
                         <li data-ng-repeat="reword in message.rewords track by $index">
                             <a href="#"
-                               data-ng-click="$ctrl.postback(reword)"
+                               data-ng-click="$event.preventDefault();$ctrl.postback(reword);"
                                data-ng-bind="reword.text">
                             </a>
                         </li>
@@ -60,9 +60,25 @@
     </div>
 </div>
 
-<div class="chatbot-floating-button" data-ng-if="$ctrl.options.enable && $ctrl.hidden">
+<div class="chatbot-floating-button" data-ng-if="$ctrl.options.enable && $ctrl.hidden && !$ctrl.started">
     <button data-ng-click="$ctrl.open()" type="button">
-        <span data-translate="chatbot_button_open"></span>
+        <span  data-translate="chatbot_button_open"></span>
+    </button>
+</div>
+
+<div class="chatbot-floating-button chatbot-reduced" data-ng-if="$ctrl.options.enable && $ctrl.hidden && $ctrl.started">
+    <button data-ng-click="$ctrl.open()" type="button">
+        <svg viewbox="0 0 24 24">
+            <use href="#chatbot-svg-arrow-up" />
+        </svg>
+    </button>
+    <button class="mr-5" data-ng-click="$ctrl.open()" type="button">
+        <span data-ng-if="$ctrl.started" data-translate="chatbot_title"></span>
+    </button>
+    <button data-ng-click="$ctrl.fullClose()" type="button">
+        <svg viewbox="0 0 24 24">
+            <use href="#chatbot-svg-close" />
+        </svg>
     </button>
 </div>
 
