@@ -7,7 +7,4 @@ export default () => ({
   controller,
   controllerAs: '$ctrl',
   bindTocontroller: true,
-  link(scope, elem, attrs, $ctrl) {
-    $ctrl.boundElement = elem;
-  },
 });

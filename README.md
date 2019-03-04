@@ -32,12 +32,13 @@ angular
     ngOvhChatbot,
   ]);
 
-// if you want to use a custom url:
+// By default, the chatbot hit the URL at "/chatbot".
+// If you want to use a custom url:
 
 angular
   .module('myApp')
   .config(/* @ngInject */(ChatbotService) => {
-    ChatbotService.setChatbotUrl("/url/to/the/chatbot");
+    ChatbotService.setChatbotUrl('/url/to/the/chatbot');
   });
 ```
 

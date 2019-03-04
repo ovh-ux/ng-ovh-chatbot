@@ -1,18 +1,21 @@
+import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
+
 class ChatbotCtrl {
   /* @ngInject */
   constructor(
+    $element,
     $q,
     $scope,
     $translate,
     ChatbotService,
-    ovhUserPref,
     CHATBOT_MESSAGE_TYPES,
   ) {
+    this.$element = $element;
     this.$q = $q;
     this.$scope = $scope;
     this.$translate = $translate;
     this.ChatbotService = ChatbotService;
-    this.ovhUserPref = ovhUserPref;
     this.MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
   }
 
@@ -22,21 +25,16 @@ class ChatbotCtrl {
     this.messages = [];
 
     this.loaders = {
-      starting: false,
-      asking: false,
+      isStarting: false,
+      isAsking: false,
     };
 
     this.options = {
-      notifications: false,
-      enable: false,
+      isEnabled: true,
+      showOpenButton: false,
     };
 
-    this.ovhUserPref
-      .getValue('CHATBOT_PREF')
-      .then((val) => {
-        Object.assign(this.options, val);
-      })
-      .catch(() => this.ovhUserPref.assign('CHATBOT_PREF', this.options));
+    this.$scope.$on('ovh-chatbot:open', () => this.open());
   }
 
   pushMessageToUI(message, type) {
@@ -47,23 +45,27 @@ class ChatbotCtrl {
   }
 
   ask() {
-    if (!this.message) {
+    if (!isString(this.message)) {
+      throw new Error('Chatbot: User message is not a string.');
+    }
+
+    if (isEmpty(this.message)) {
       return;
     }
 
-    this.loaders.asking = true;
+    this.loaders.isAsking = true;
     this.postMessage(this.message)
       .finally(() => {
-        this.loaders.asking = false;
+        this.loaders.isAsking = false;
         this.message = '';
       });
   }
 
   postback(postbackMessage) {
-    this.loaders.asking = true;
+    this.loaders.isAsking = true;
     this.postMessage(postbackMessage.text, postbackMessage.options, true)
       .finally(() => {
-        this.loaders.asking = false;
+        this.loaders.isAsking = false;
       });
   }
 
@@ -107,7 +109,7 @@ class ChatbotCtrl {
   }
 
   open() {
-    if (!this.options.enable) {
+    if (!this.options.isEnabled) {
       return;
     }
 
@@ -127,7 +129,7 @@ class ChatbotCtrl {
         this.enableScroll();
 
         const contextId = this.constructor.getContextId();
-        this.loaders.starting = true;
+        this.loaders.isStarting = true;
 
         return contextId ? this.ChatbotService.history(contextId) : [];
       })
@@ -135,12 +137,12 @@ class ChatbotCtrl {
         this.messages = messages.length > 0 ? messages : [this.welcome()];
       })
       .finally(() => {
-        this.loaders.starting = false;
+        this.loaders.isStarting = false;
       });
   }
 
   enableDrag() {
-    this.boundElement.find('.chatbot-main').draggable({
+    this.$element.find('.chatbot-main').draggable({
       handle: '.chatbot-header',
       cursor: 'move',
       containment: 'window',
@@ -149,8 +151,8 @@ class ChatbotCtrl {
 
   enableScroll() {
     this.$scope.$watch(
-      () => this.boundElement.find('.chatbot-messages')[0].scrollHeight,
-      newY => this.boundElement.find('.chatbot-body').scrollTop(newY),
+      () => this.$element.find('.chatbot-messages')[0].scrollHeight,
+      newY => this.$element.find('.chatbot-body').scrollTop(newY),
     );
   }
 

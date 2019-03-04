@@ -1,41 +1,8 @@
-@chatbot-margin: 20px;
-@chatbot-border-radius: 30px;
-@chatbot-textarea-border-size: 1px;
-@chatbot-textarea-line-height: 18px;
-@chatbot-send-button-size: 24px;
-@chatbot-form-margin: 16px;
-
-@chatbot-header-height: 80px;
-@chatbot-body-height: 400px;
-
-@chatbot-footer-height:
-  @chatbot-form-margin * 2
-  + @chatbot-textarea-line-height * 3
-  + @chatbot-textarea-border-size * 2;
-
-@chatbot-width: 320px;
-@chatbot-height:  @chatbot-header-height + @chatbot-body-height + @chatbot-footer-height;
-@chatbot-floating-button-height: 54px;
-
-@chatbot-active-color: #01a3c0;
-@chatbot-disabled-color: #8f8f8f;
-
-@chatbot-bg-color: #fff;
-@chatbot-primary-color: #ed642a;
-@chatbot-header-bg-color1: #f98841;
-@chatbot-header-bg-color2: #f75a56;
-@chatbot-time-color: #bbbdbf;
-@chatbot-user-message-color: #fff;
-@chatbot-user-message-bg-color: #00a2bf;
-@chatbot-bot-message-bg-color: #f2f2f2;
-@chatbot-textarea-border-color: #babcbe;
-
-@chatbot-font-family: "Source Sans Pro";
-@chatbot-header-font-size: 24px;
+@import "./_variables.less";
 
 @chatbot-smallscreen: ~"only screen and (max-width: 767px) ";
 
-ovh-chatbot {
+ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
   font-family: @chatbot-font-family;
 
   button {
@@ -74,7 +41,7 @@ ovh-chatbot {
   }
 
   .chatbot-reduced {
-    border-width: 0px;
+    border-width: 0;
     background: @chatbot-header-bg-color1;
     background: radial-gradient(circle at bottom right, @chatbot-header-bg-color1, @chatbot-header-bg-color2);
     padding-left: 5px;
@@ -106,11 +73,12 @@ ovh-chatbot {
         display: none;
       }
 
-      h6 {
+      h1 {
         color: #fff;
         position: relative;
         margin: 0;
         font-size: @chatbot-header-font-size;
+        font-weight: @chatbot-header-font-weight;
       }
     }
 
