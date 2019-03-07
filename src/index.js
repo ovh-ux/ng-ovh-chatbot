@@ -1,7 +1,7 @@
 import angular from 'angular';
 import translate from 'angular-translate';
 
-import '@ovh-ux/translate-async-loader';
+import '@ovh-ux/ng-translate-async-loader';
 
 import service from './service';
 import directive from './directive';
@@ -13,7 +13,7 @@ const moduleName = 'ngOvhChatbot';
 
 angular
   .module(moduleName, [
-    'translate-async-loader',
+    'ngTranslateAsyncLoader',
     translate,
   ])
   .service('ChatbotService', service)
