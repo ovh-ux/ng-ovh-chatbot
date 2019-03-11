@@ -4,6 +4,8 @@ import translate from 'angular-translate';
 import '@ovh-ux/ng-translate-async-loader';
 
 import service from './service';
+import livechatService from './livechat.service';
+import livechatFactory from './livechat.factory';
 import directive from './directive';
 import iconsTemplate from './templates/icons.html';
 
@@ -17,14 +19,17 @@ angular
     translate,
   ])
   .service('ChatbotService', service)
+  .service('LivechatService', livechatService)
+  .factory('LivechatFactory', livechatFactory)
   .directive('ovhChatbot', directive)
   .component('ovhChatbotIcons', { template: iconsTemplate })
   .run(/* @ngTranslationsInject:xml ./translations */)
   .constant('CHATBOT_MESSAGE_TYPES', {
+    agent: 'agent',
     bot: 'bot',
-    user: 'user',
     postback: 'postback',
     survey: 'survey',
+    livechatsurvey: 'livechatsurvey',
   })
   .constant('CHATBOT_SURVEY_STEPS', {
     ask: 'ask',

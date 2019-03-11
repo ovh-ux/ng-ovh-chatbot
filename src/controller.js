@@ -1,6 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import remove from 'lodash/remove';
+import filter from 'lodash/filter';
 
 class ChatbotCtrl {
   /* @ngInject */
@@ -15,6 +16,8 @@ class ChatbotCtrl {
     CHATBOT_CONFIG,
     CHATBOT_MESSAGE_TYPES,
     CHATBOT_SURVEY_STEPS,
+    LivechatFactory,
+    LivechatService,
   ) {
     this.$element = $element;
     this.$q = $q;
@@ -26,10 +29,13 @@ class ChatbotCtrl {
     this.CONFIG = CHATBOT_CONFIG;
     this.MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
     this.SURVEY_STEPS = CHATBOT_SURVEY_STEPS;
+    this.LivechatFactory = LivechatFactory;
+    this.LivechatService = LivechatService;
   }
 
   $onInit() {
     this.started = false;
+    this.livechat = false;
     this.hidden = true;
     this.messages = [];
     this.suggestions = [];
@@ -38,6 +44,7 @@ class ChatbotCtrl {
       isStarting: false,
       isAsking: false,
       isGettingSuggestions: false,
+      isSendingSurvey: false,
     };
 
     this.options = {
@@ -47,6 +54,64 @@ class ChatbotCtrl {
 
     this.$scope.$on('ovh-chatbot:open', () => this.open());
     this.$scope.$on('ovh-chatbot:opened', () => this.focusInput());
+
+    this.LivechatService.getCountryConfiguration(this.countryCode).then((countryConfig) => {
+      this.livechatFactory = new this.LivechatFactory(
+        countryConfig,
+        this.countryCode,
+        this.languageCode, {
+          onAgentMessage: (msg) => {
+            this.$scope.$apply(() => {
+              this.onLivechatAgentMessage(msg);
+            });
+          },
+          onSystemMessage: (msg) => {
+            this.$scope.$apply(() => {
+              this.onLivechatSystemMessage(msg);
+            });
+          },
+          onHistory: (history) => {
+            this.$scope.$apply(() => {
+              this.onLivechatHistory(history);
+            });
+          },
+          onSurvey: (sessionId) => {
+            this.$scope.$apply(() => {
+              this.onLivechatSurvey(sessionId);
+            });
+          },
+          onConnectionFailure: () => {
+            this.$scope.$apply(() => {
+              this.onLivechatConnectionFailure();
+            });
+          },
+          onError: () => {
+            this.$scope.$apply(() => {
+              this.onLivechatError();
+            });
+          },
+          onNoAgentsAvailable: () => {
+            this.$scope.$apply(() => {
+              this.onLivechatNoAgentsAvailable();
+            });
+          },
+        },
+      );
+
+      this.livechatFactory.restore().then((chatRestored) => {
+        if (chatRestored) {
+          this.started = true;
+          this.livechat = true;
+          this.open();
+        }
+      }).catch(() => {
+        this.onLivechatConnectionFailure();
+        this.started = true;
+        this.open();
+      });
+    }).catch(() => {
+      this.LivechatFactory = null;
+    });
   }
 
   pushMessageToUI(message) {
@@ -75,19 +140,43 @@ class ChatbotCtrl {
       return;
     }
 
-    this.loaders.isAsking = true;
-    this.postMessage(messageToSend)
-      .finally(() => {
-        this.loaders.isAsking = false;
-      });
+    if (!this.livechat) {
+      this.loaders.isAsking = true;
+      this.postMessage(this.message)
+        .finally(() => {
+          this.loaders.isAsking = false;
+          this.message = '';
+        });
+    } else {
+      this.postChatMessage(this.message);
+      this.message = '';
+    }
   }
 
   postback(postbackMessage) {
+    if (postbackMessage.action) {
+      this.doAction(postbackMessage.action);
+    }
+
     this.loaders.isAsking = true;
     this.postMessage(postbackMessage.text, postbackMessage.options, true)
       .finally(() => {
         this.loaders.isAsking = false;
       });
+  }
+
+  doAction(action) {
+    switch (action) {
+      case 'fullClose':
+        this.fullClose();
+        break;
+      case 'endConcurrentLivechat':
+        this.endConcurrentLivechat();
+        this.startLivechat();
+        break;
+      default:
+        break;
+    }
   }
 
   postMessage(messageText, options, isPostback) {
@@ -116,6 +205,14 @@ class ChatbotCtrl {
           this.askForLivechat();
         }
       });
+  }
+
+  postChatMessage(messageText) {
+    this.livechatFactory.sendMessageToAgent(messageText);
+    this.pushMessageToUI(
+      { text: messageText, time: moment().format('LT') },
+      this.MESSAGE_TYPES.user,
+    );
   }
 
   welcome() {
@@ -162,6 +259,7 @@ class ChatbotCtrl {
   fullClose() {
     this.hidden = true;
     this.started = false;
+    this.endLivechat();
   }
 
   open() {
@@ -181,7 +279,45 @@ class ChatbotCtrl {
   }
 
   start() {
-    return this.$q.when(true)
+    // Check livechat initialization
+    if (!this.livechatFactory) {
+      this.pushMessageToUI(
+        {
+          text: this.$translate.instant('livechat_init_error'),
+          time: moment().format('LT'),
+        },
+        this.MESSAGE_TYPES.bot,
+      );
+      return;
+    }
+
+    // Check for concurrent session in another tab / window
+    if (!this.livechatFactory.hasConcurrentSession()) {
+      this.startLivechat();
+    } else {
+      // Ask whether to end the concurrent session
+      this.pushMessageToUI(
+        {
+          text: this.$translate.instant('livechat_concurrent_session'),
+          time: moment().format('LT'),
+          rewords: [
+            {
+              action: 'endConcurrentLivechat',
+              text: this.$translate.instant('chatbot_answer_yes'),
+            },
+            {
+              action: 'fullClose',
+              text: this.$translate.instant('chatbot_answer_no'),
+            },
+          ],
+        },
+        this.MESSAGE_TYPES.bot,
+      );
+    }
+
+    this.enableDrag();
+    this.enableScroll();
+    /* return this.$q.when(true)
       .then(() => {
         this.started = true;
 
@@ -206,7 +342,128 @@ class ChatbotCtrl {
       })
       .finally(() => {
         this.loaders.isStarting = false;
+      }); */
+  }
+
+  startLivechat() {
+    this.started = true;
+    this.livechat = true;
+    this.livechatFactory.start().catch(() => {
+      this.onLivechatConnectionFailure();
+    });
+  }
+
+  endLivechat() {
+    this.livechatFactory.end();
+    this.livechat = false;
+  }
+
+  endConcurrentLivechat() {
+    // Use a separate instance to prevent interferences
+    // with the next session
+    const killerFactory = new this.LivechatFactory();
+    killerFactory.endConcurrentSession();
+  }
+
+  onLivechatAgentMessage(msg) {
+    this.pushMessageToUI(
+      { text: msg.Message, time: moment().format('LT') },
+      this.MESSAGE_TYPES.agent,
+    );
+  }
+
+  onLivechatSystemMessage(msg) {
+    this.pushMessageToUI(
+      { text: msg.Message, time: moment().format('LT') },
+      this.MESSAGE_TYPES.bot,
+    );
+  }
+
+  onLivechatHistory(messages) {
+    messages.forEach((msg) => {
+      this.pushMessageToUI(
+        { text: msg.text, time: msg.time.format('LT') },
+        msg.type,
+      );
+    });
+  }
+
+  onLivechatSurvey(sessionId) {
+    this.pushMessageToUI(
+      { text: this.$translate.instant('livechat_survey'), time: moment().format('LT'), sessionId },
+      this.MESSAGE_TYPES.chatsurvey,
+    );
+  }
+
+  sendLivechatSurvey(msg) {
+    if (!this.loaders.isSendingSurvey) {
+      this.loaders.isSendingSurvey = true;
+
+      this.livechatFactory.sendSurvey(msg.sessionId, msg.survey).then(() => {
+        this.pushMessageToUI(
+          { text: this.$translate.instant('livechat_survey_thanks'), time: moment().format('LT') },
+          this.MESSAGE_TYPES.bot,
+        );
+        this.hideLivechatSurvey();
+      }).catch(() => {
+        this.pushMessageToUI(
+          { text: this.$translate.instant('livechat_survey_error'), time: moment().format('LT') },
+          this.MESSAGE_TYPES.bot,
+        );
+      }).finally(() => {
+        this.loaders.isSendingSurvey = false;
       });
+    }
+  }
+
+  hideLivechatSurvey() {
+    this.messages = filter(this.messages, msg => msg.type !== this.MESSAGE_TYPES.chatsurvey);
+  }
+
+  onLivechatNoAgentsAvailable() {
+    this.livechat = false;
+    this.pushMessageToUI(
+      { text: this.$translate.instant('livechat_no_agents_available'), time: moment().format('LT') },
+      this.MESSAGE_TYPES.bot,
+    );
+  }
+
+  onLivechatConnectionFailure() {
+    this.livechat = false;
+    this.pushMessageToUI(
+      { text: this.$translate.instant('livechat_connection_failure'), time: moment().format('LT') },
+      this.MESSAGE_TYPES.bot,
+    );
+  }
+
+  onLivechatError(err) {
+    let i = this.messages.length - 1;
+    let pass = false;
+    const text = this.$translate.instant(err || 'livechat_error');
+
+    // Check this message has not been already displayed
+    // since the last customer message because the library
+    // can throw the same error multiple times
+    while (i >= 0) {
+      const msg = this.messages[i];
+
+      if (msg.text === text
+        && msg.type === this.MESSAGE_TYPES.bot) {
+        pass = true;
+        break;
+      } else if (msg.type === this.MESSAGE_TYPES.user) {
+        break;
+      }
+
+      i -= 1;
+    }
+
+    if (!pass) {
+      this.pushMessageToUI(
+        { text, time: moment().format('LT') },
+        this.MESSAGE_TYPES.bot,
+      );
+    }
   }
 
   suggest(message) {

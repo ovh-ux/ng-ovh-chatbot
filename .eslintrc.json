@@ -7,7 +7,10 @@
     "browser": true
   },
   "globals": {
-    "moment": true
+    "moment": true,
+    "EGainLibrarySettings": true,
+    "EGainLibrary": true,
+    "angular": true
   },
   "rules": {
     "import/no-unresolved": 0

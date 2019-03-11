@@ -16,4 +16,21 @@
    <translation id="chatbot_answer_no" qtlid="34788">Non</translation>
    <translation id="chatbot_answer_ok" qtlid="433745">Ok</translation>
    <translation id="chatbot_answer_placeholder" qtlid="522448">Laisser un commentaire</translation>
+
+   <translation id="livechat_init_error">Oups... la connexion avec le conseiller est impossible. Rechargez la page, puis réessayez.</translation>
+   <translation id="livechat_survey">Votre avis nous importe ! Répondez à ce rapide questionaire pour nous en dire plus.</translation>
+   <translation id="livechat_survey_send">Envoyer</translation>
+   <translation id="livechat_survey_thanks">Le questionnaire a bien été envoyé. Merci de votre participation !</translation>
+   <translation id="livechat_survey_error">Oups... Une erreur est survenue lors de l'envoi du formulaire.</translation>
+   <translation id="livechat_survey_question1">1/ Notre conseiller a-t-il traité votre question de façon amicale et professionelle ? Êtes-vous :</translation>
+   <translation id="livechat_survey_question2">2/ Comment évalueriez-vous les compétences techniques du conseiller ?</translation>
+   <translation id="livechat_survey_question3">3/ L'aide reçue a-t-elle été utile ?</translation>
+   <translation id="livechat_survey_answer_over_satisfied">Très satisfait</translation>
+   <translation id="livechat_survey_answer_satisfied">Satisfait</translation>
+   <translation id="livechat_survey_answer_unsatisfied">Non satisfait</translation>
+   <translation id="livechat_connection_failure">Oups... la connexion avec le conseiller a été interrompue.</translation>
+   <translation id="livechat_error">Oups... une erreur est survenue. Le dernier message n'a peut être pas été envoyé.</translation>
+   <translation id="livechat_no_agents_available">Aucun conseiller n'est disponible actuellement.</translation>
+   <translation id="livechat_concurrent_session">Oups... Il semblerait qu'une autre session de chat soit déjà ouverte.
+Souhaitez-vous l'arrêter et en démarrer une nouvelle ?</translation>
 </translations>

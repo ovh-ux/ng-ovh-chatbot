@@ -11,6 +11,10 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
     cursor: pointer;
     background: transparent;
 
+    &:disabled {
+      cursor: not-allowed;
+    }
+
     svg {
       width: 20px;
       height: 20px;
@@ -129,6 +133,7 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
           display: block;
           border-radius: 25px;
           border: @chatbot-textarea-border-size solid @chatbot-textarea-border-color;
+          box-sizing: border-box;
           box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.1);
           height: auto;
           line-height: @chatbot-textarea-line-height;
@@ -255,6 +260,39 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
 
       .chatbot-message-bot {
         margin-left: 43px;
+
+        .chatbot-text {
+          background-color: @chatbot-bot-message-bg-color;
+          border-radius: 0 12px 12px 12px;
+        }
+      }
+
+      .chatbot-message-agent {
+        margin-left: 43px;
+
+        .chatbot-text {
+          background-color: @chatbot-bot-message-bg-color;
+          border-radius: 0 12px 12px 12px;
+        }
+      }
+
+      .chatbot-message-chat-survey {
+        margin-left: 43px;
+
+        .chatbot-chat-survey-form {
+          label {
+            display: block;
+          }
+
+          .chatbot-chat-survey-submit-container {
+            text-align: center;
+            padding-top: 5px;
+
+            .chatbot-chat-survey-submit-button {
+              font-size: 13px;
+            }
+          }
+        }
 
         .chatbot-text {
           background-color: @chatbot-bot-message-bg-color;
