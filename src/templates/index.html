@@ -18,7 +18,7 @@
                  data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.postback"
                  data-ng-class="{'chatbot-message-user': message.type === $ctrl.MESSAGE_TYPES.user,
                                  'chatbot-message-bot': message.type !== $ctrl.MESSAGE_TYPES.user}">
-                <div class="chatbot-avatar" data-ng-if="message.type === $ctrl.MESSAGE_TYPES.bot">
+                <div class="chatbot-avatar" data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.user">
                     <svg viewbox="0 0 32 32">
                         <use href="#chatbot-svg-avatar" />
                     </svg>
@@ -34,25 +34,54 @@
                             </a>
                         </li>
                     </ul>
+                    <div data-ng-if="message.type === $ctrl.MESSAGE_TYPES.survey">
+                        <button class="chatbot-feedback chatbot-feedback-yes"
+                                data-translate-attr="{'aria-label':'chatbot_answer_yes'}"
+                                data-ng-click="$ctrl.answerSurvey(true)">
+                            <svg viewbox="0 0 32 32" aria-hidden="true">
+                                <use href="#chatbot-svg-face-happy" />
+                            </svg>
+                            <span data-translate="chatbot_answer_yes"></span>
+                        </button>
+                        <button class="chatbot-feedback chatbot-feedback-no"
+                                data-translate-attr="{'aria-label':'chatbot_answer_no'}"
+                                data-ng-click="$ctrl.answerSurvey(false)">
+                            <svg viewbox="0 0 32 32" aria-hidden="true">
+                                <use href="#chatbot-svg-face-sad" />
+                            </svg>
+                            <span data-translate="chatbot_answer_no"></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="chatbot-footer">
+        <div class="chatbot-suggestions" data-ng-if="$ctrl.suggestions.length > 0">
+            <div class="chatbot-suggestion-title" data-translate="chatbot_suggestion_text"></div>
+            <ul>
+                <li data-ng-repeat="suggestion in $ctrl.suggestions track by $index">
+                    <button data-ng-bind="suggestion" data-ng-click="$ctrl.answerSuggest(suggestion)"></button>
+                </li>
+            </ul>
+        </div>
         <form data-ng-submit="$ctrl.ask()">
             <textarea name="message"
                       rows="1"
                       autofocus="autofocus"
-                      placeholder="{{:: 'chatbot_input_placeholder' | translate }}"
+                      data-translate-attr="{placeholder:'chatbot_input_placeholder'}"
                       data-ng-model="$ctrl.message"
                       data-ng-keyup="$event.keyCode == 13 && $ctrl.ask()">
             </textarea>
             <button type="submit"
+                    data-translate-attr="{'aria-label':'chatbot_input_send'}"
                     data-ng-disabled="!$ctrl.message.length">
-                <svg viewbox="0 0 24 24" data-ng-if="!$ctrl.message.length">
+                <svg viewbox="0 0 24 24" data-ng-if="!$ctrl.message.length"
+                     aria-hidden="true">
                     <use href="#chatbot-svg-disabled-paperplane" />
                 </svg>
-                <svg viewbox="0 0 24 24" data-ng-if="$ctrl.message.length">
+                <svg viewbox="0 0 24 24" data-ng-if="$ctrl.message.length"
+                     aria-hidden="true">
                     <use href="#chatbot-svg-paperplane" />
                 </svg>
             </button>
@@ -61,21 +90,25 @@
 </div>
 
 <div class="chatbot-floating-button" data-ng-if="$ctrl.options.isEnabled && $ctrl.options.showOpenButton && $ctrl.hidden && !$ctrl.started">
-    <button data-ng-click="$ctrl.open()" type="button">
+    <button data-ng-click="$ctrl.open()" type="button"
+            data-translate-attr="{'aria-label':'chatbot_button_open'}">
         <span  data-translate="chatbot_button_open"></span>
     </button>
 </div>
 
 <div class="chatbot-floating-button chatbot-reduced" data-ng-if="$ctrl.options.isEnabled && $ctrl.hidden && $ctrl.started">
-    <button data-ng-click="$ctrl.open()" type="button">
+    <button data-ng-click="$ctrl.open()" type="button"
+            data-translate-attr="{'aria-label':'chatbot_button_show'}">
         <svg viewbox="0 0 24 24">
             <use href="#chatbot-svg-arrow-up" />
         </svg>
     </button>
-    <button class="mr-5" data-ng-click="$ctrl.open()" type="button">
+    <button class="mr-5" data-ng-click="$ctrl.open()" type="button"
+            data-translate-attr="{'aria-label':'chatbot_button_show'}">
         <span data-ng-if="$ctrl.started" data-translate="chatbot_title"></span>
     </button>
-    <button data-ng-click="$ctrl.fullClose()" type="button">
+    <button data-ng-click="$ctrl.fullClose()" type="button"
+            data-translate-attr="{'aria-label':'chatbot_button_close'}">
         <svg viewbox="0 0 24 24">
             <use href="#chatbot-svg-close" />
         </svg>
@@ -83,7 +116,8 @@
 </div>
 
 <div class="chatbot-floating-button" data-ng-if="$ctrl.options.isEnabled && !$ctrl.hidden">
-    <button data-ng-click="$ctrl.close()" type="button">
+    <button data-ng-click="$ctrl.close()" type="button"
+            data-translate-attr="{'aria-label':'chatbot_button_hide'}">
         <svg viewbox="0 0 24 24">
             <use href="#chatbot-svg-close" />
         </svg>

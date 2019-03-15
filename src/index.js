@@ -19,11 +19,19 @@ angular
   .service('ChatbotService', service)
   .directive('ovhChatbot', directive)
   .component('ovhChatbotIcons', { template: iconsTemplate })
-  .run(/* @ngTranslationsInject ./translations */)
+  .run(/* @ngTranslationsInject:xml ./translations */)
   .constant('CHATBOT_MESSAGE_TYPES', {
     bot: 'bot',
     user: 'user',
     postback: 'postback',
+    survey: 'survey',
+  })
+  .constant('CHATBOT_API_ACTIONS', {
+    talk: 'talk',
+    history: 'history',
+    feedback: 'feedback',
+    suggestions: 'suggestions',
+    topKnowledge: 'topKnowledge',
   });
 
 export default moduleName;
