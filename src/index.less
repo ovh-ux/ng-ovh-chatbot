@@ -124,16 +124,16 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
           height: 50px;
           padding: 5px;
           margin-top: 4px;
-
           display: flex;
           align-items: center;
           justify-content: flex-start;
 
-          svg {
+          svg { /* stylelint-disable-line no-descending-specificity */
             flex: 1;
             width: 32px;
             height: 32px;
           }
+
           span {
             flex: 2;
             text-align: left;
@@ -186,7 +186,6 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
         margin: @chatbot-form-margin;
         margin-bottom: -50px;
         padding: 0 10px;
-
         background-color: #fff;
         border: 1px solid rgba(187, 189, 191, 1);
         border-radius: 12px 12px 0 0;
@@ -207,7 +206,7 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
           li {
             padding: 7px 0;
 
-            button {
+            button { /* stylelint-disable-line no-descending-specificity */
               display: block;
               width: 100%;
               text-align: left;
@@ -235,14 +234,14 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
           width: 100%;
         }
 
-        button {
+        button { /* stylelint-disable-line no-descending-specificity */
           position: absolute;
           bottom: 18px;
           right: 18px;
           width: @chatbot-send-button-size;
           height: @chatbot-send-button-size;
 
-          svg {
+          svg { /* stylelint-disable-line no-descending-specificity */
             width: @chatbot-send-button-size;
             height: @chatbot-send-button-size;
           }

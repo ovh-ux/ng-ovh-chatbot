@@ -8,16 +8,20 @@ class ChatbotCtrl {
     $element,
     $q,
     $scope,
+    $timeout,
     $translate,
     ChatbotService,
     CHATBOT_MESSAGE_TYPES,
+    CHATBOT_CONFIG,
   ) {
     this.$element = $element;
     this.$q = $q;
     this.$scope = $scope;
+    this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChatbotService = ChatbotService;
     this.MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
+    this.CONFIG = CHATBOT_CONFIG;
   }
 
   $onInit() {
@@ -53,21 +57,22 @@ class ChatbotCtrl {
   }
 
   ask(message) {
-    this.message = message || this.message;
+    const messageToSend = message || this.message;
+    this.message = '';
+    this.suggestions = [];
 
-    if (!isString(this.message)) {
+    if (!isString(messageToSend)) {
       throw new Error('Chatbot: User message is not a string.');
     }
 
-    if (isEmpty(this.message)) {
+    if (isEmpty(messageToSend)) {
       return;
     }
 
     this.loaders.isAsking = true;
-    this.postMessage(this.message)
+    this.postMessage(messageToSend)
       .finally(() => {
         this.loaders.isAsking = false;
-        this.message = '';
       });
   }
 
@@ -96,8 +101,10 @@ class ChatbotCtrl {
           type: this.MESSAGE_TYPES.bot,
         });
         if (botMessage.askFeedback) {
-          this.removeSurvey();
-          this.pushMessageToUI(this.survey());
+          this.$timeout(() => {
+            this.removeSurvey();
+            this.pushMessageToUI(this.survey());
+          }, this.CONFIG.secondsBeforeSurvey);
         }
         if (botMessage.startLivechat) {
           this.askForLivechat();
@@ -160,6 +167,7 @@ class ChatbotCtrl {
 
         this.enableDrag();
         this.enableScroll();
+        this.enableAutocomplete();
 
         const contextId = this.constructor.getContextId();
         this.loaders.isStarting = true;
@@ -181,16 +189,19 @@ class ChatbotCtrl {
   }
 
   suggest(message) {
-    this.suggestions = [
-      'Cela va-t-il déchirer ?',
-      'Comment manger des frites ?',
-      '42 ?',
-    ];
-  }
+    if (message && message.length > 3) {
+      return this.ChatbotService.suggestions(message)
+        .then((suggestions) => {
+          this.suggestions = suggestions
+            .sort((a, b) => b.score - a.score)
+            .map(suggestion => suggestion.rootConditionReword)
+            .filter((suggestion, index, self) => self.indexOf(suggestion) === index)
+            .splice(0, 3);
+        });
+    }
 
-  answerSuggest(message) {
     this.suggestions = [];
-    this.ask(message);
+    return undefined;
   }
 
   enableDrag() {
@@ -209,7 +220,7 @@ class ChatbotCtrl {
   }
 
   enableAutocomplete() {
-    this.$scope.$watch(this.message, newMessage => this.suggest(newMessage));
+    this.$scope.$watch(() => this.message, newMessage => this.suggest(newMessage));
   }
 
   static getContextId() {

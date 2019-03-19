@@ -57,11 +57,11 @@
         </div>
     </div>
     <div class="chatbot-footer">
-        <div class="chatbot-suggestions" data-ng-if="$ctrl.suggestions.length > 0">
+        <div class="chatbot-suggestions" data-ng-if="$ctrl.suggestions.length > 0 && $ctrl.message.length > 3">
             <div class="chatbot-suggestion-title" data-translate="chatbot_suggestion_text"></div>
             <ul>
                 <li data-ng-repeat="suggestion in $ctrl.suggestions track by $index">
-                    <button data-ng-bind="suggestion" data-ng-click="$ctrl.answerSuggest(suggestion)"></button>
+                    <button data-ng-bind="suggestion" data-ng-click="$ctrl.ask(suggestion)"></button>
                 </li>
             </ul>
         </div>

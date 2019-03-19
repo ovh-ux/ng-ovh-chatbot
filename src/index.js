@@ -32,6 +32,9 @@ angular
     feedback: 'feedback',
     suggestions: 'suggestions',
     topKnowledge: 'topKnowledge',
+  })
+  .constant('CHATBOT_CONFIG', {
+    secondsBeforeSurvey: 3000,
   });
 
 export default moduleName;
