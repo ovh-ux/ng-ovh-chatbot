@@ -7,21 +7,25 @@ class ChatbotCtrl {
   constructor(
     $element,
     $q,
+    $rootScope,
     $scope,
     $timeout,
     $translate,
     ChatbotService,
-    CHATBOT_MESSAGE_TYPES,
     CHATBOT_CONFIG,
+    CHATBOT_MESSAGE_TYPES,
+    CHATBOT_SURVEY_STEPS,
   ) {
     this.$element = $element;
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChatbotService = ChatbotService;
-    this.MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
     this.CONFIG = CHATBOT_CONFIG;
+    this.MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
+    this.SURVEY_STEPS = CHATBOT_SURVEY_STEPS;
   }
 
   $onInit() {
@@ -41,6 +45,7 @@ class ChatbotCtrl {
     };
 
     this.$scope.$on('ovh-chatbot:open', () => this.open());
+    this.$scope.$on('ovh-chatbot:opened', () => this.focusInput());
   }
 
   pushMessageToUI(message) {
@@ -122,14 +127,24 @@ class ChatbotCtrl {
   survey() {
     return this.botMessage('chatbot_survey_message', {
       type: this.MESSAGE_TYPES.survey,
+      survey: {
+        step: this.SURVEY_STEPS.ask,
+        details: null,
+      },
     });
   }
 
-  answerSurvey(answer) {
+  surveyNextStep(message) { /* eslint-disable no-param-reassign */
+    message.survey.step = this.SURVEY_STEPS.details;
+    message.text = this.$translate.instant('chatbot_survey_message_details');
+  }
+
+  answerSurvey(answer, details) {
     this.removeSurvey();
     return this.ChatbotService.feedback(
       this.constructor.getContextId(),
       answer ? 'positive' : 'negative',
+      details,
     ).then(() => {
       this.pushMessageToUI(this.botMessage('chatbot_thanks_message'));
     });
@@ -158,6 +173,10 @@ class ChatbotCtrl {
     }
 
     this.hidden = false;
+
+    this.$timeout(() => {
+      this.$rootScope.$broadcast('ovh-chatbot:opened');
+    });
   }
 
   start() {
@@ -221,6 +240,10 @@ class ChatbotCtrl {
 
   enableAutocomplete() {
     this.$scope.$watch(() => this.message, newMessage => this.suggest(newMessage));
+  }
+
+  focusInput() {
+    this.$element.find('.chatbot-footer textarea').focus();
   }
 
   static getContextId() {

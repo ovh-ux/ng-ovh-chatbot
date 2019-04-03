@@ -37,23 +37,37 @@
                             </a>
                         </li>
                     </ul>
-                    <div data-ng-if="message.type === $ctrl.MESSAGE_TYPES.survey">
-                        <button class="chatbot-feedback chatbot-feedback-yes"
-                                data-translate-attr="{'aria-label':'chatbot_answer_yes'}"
-                                data-ng-click="$ctrl.answerSurvey(true)">
-                            <svg viewbox="0 0 32 32" aria-hidden="true">
-                                <use href="#chatbot-svg-face-happy" />
-                            </svg>
-                            <span data-translate="chatbot_answer_yes"></span>
-                        </button>
-                        <button class="chatbot-feedback chatbot-feedback-no"
-                                data-translate-attr="{'aria-label':'chatbot_answer_no'}"
-                                data-ng-click="$ctrl.answerSurvey(false)">
-                            <svg viewbox="0 0 32 32" aria-hidden="true">
-                                <use href="#chatbot-svg-face-sad" />
-                            </svg>
-                            <span data-translate="chatbot_answer_no"></span>
-                        </button>
+                    <div class="chatbot-survey"
+                         data-ng-if="message.type === $ctrl.MESSAGE_TYPES.survey">
+                        <div data-ng-if="message.survey.step === $ctrl.SURVEY_STEPS.ask">
+                            <button class="chatbot-feedback chatbot-feedback-yes"
+                                    data-translate-attr="{'aria-label':'chatbot_answer_yes'}"
+                                    data-ng-click="$ctrl.answerSurvey(true)">
+                                <svg viewbox="0 0 32 32" aria-hidden="true">
+                                    <use href="#chatbot-svg-face-happy" />
+                                </svg>
+                                <span data-translate="chatbot_answer_yes"></span>
+                            </button>
+                            <button class="chatbot-feedback chatbot-feedback-no"
+                                    data-translate-attr="{'aria-label':'chatbot_answer_no'}"
+                                    data-ng-click="$ctrl.surveyNextStep(message)">
+                                <svg viewbox="0 0 32 32" aria-hidden="true">
+                                    <use href="#chatbot-svg-face-sad" />
+                                </svg>
+                                <span data-translate="chatbot_answer_no"></span>
+                            </button>
+                        </div>
+                        <form data-ng-submit="$ctrl.answerSurvey(false, message.survey.details)"
+                              data-ng-if="message.survey.step === $ctrl.SURVEY_STEPS.details">
+                            <textarea rows="5"
+                                      data-ng-model="message.survey.details"
+                                      data-translate-attr="{placeholder: 'chatbot_answer_placeholder'}">
+                            </textarea>
+                            <button class="chatbot-feedback"
+                                    type="submit"
+                                    data-translate="chatbot_answer_ok">
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>

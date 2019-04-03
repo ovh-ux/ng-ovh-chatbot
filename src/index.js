@@ -26,6 +26,10 @@ angular
     postback: 'postback',
     survey: 'survey',
   })
+  .constant('CHATBOT_SURVEY_STEPS', {
+    ask: 'ask',
+    details: 'details',
+  })
   .constant('CHATBOT_API_ACTIONS', {
     talk: 'talk',
     history: 'history',

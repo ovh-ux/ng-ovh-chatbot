@@ -10,7 +10,10 @@
    <translation id="chatbot_button_close">Fermer le tchat</translation>
    <translation id="chatbot_welcome_message">Bonjour ! Comment puis-je vous aider ?</translation>
    <translation id="chatbot_survey_message">Êtes-vous satisfait de la réponse ?</translation>
+   <translation id="chatbot_survey_message_details">Avez-vous un commentaire ?</translation>
    <translation id="chatbot_thanks_message">Merci de votre retour!</translation>
    <translation id="chatbot_answer_yes">Oui</translation>
    <translation id="chatbot_answer_no">Non</translation>
+   <translation id="chatbot_answer_ok">Ok</translation>
+   <translation id="chatbot_answer_placeholder">Laisser un commentaire</translation>
 </translations>

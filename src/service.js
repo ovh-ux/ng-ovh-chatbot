@@ -62,11 +62,12 @@ class ChatbotService {
     }).then(({ data }) => data);
   }
 
-  feedback(contextId, userInput) {
+  feedback(contextId, userInput, reason) {
     return this.post({
       action: this.CHATBOT_API_ACTIONS.feedback,
       contextId,
       userInput,
+      reason,
     }).then(({ data }) => data);
   }
 
