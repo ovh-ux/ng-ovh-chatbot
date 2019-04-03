@@ -44,6 +44,11 @@ angular
   })
   .constant('CHATBOT_CONFIG', {
     secondsBeforeSurvey: 3000,
+  })
+  .constant('LIVECHAT_MESSAGE_TYPES', {
+    Customer: 'user',
+    Agent: 'agent',
+    System: 'bot',
   });
 
 export default moduleName;

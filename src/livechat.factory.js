@@ -13,6 +13,7 @@ function LivechatFactory(
   $window,
   LivechatService,
   CHATBOT_MESSAGE_TYPES,
+  LIVECHAT_MESSAGE_TYPES,
 ) {
   return class {
     constructor(countryConfig, languageCode, countryCode, handlers) {
@@ -22,6 +23,7 @@ function LivechatFactory(
       this.$q = $q;
       this.$window = $window;
       this.CHATBOT_MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
+      this.LIVECHAT_MESSAGE_TYPES = LIVECHAT_MESSAGE_TYPES;
       this.LivechatService = LivechatService;
       this.countryConfig = countryConfig;
       this.languageCode = languageCode;
@@ -95,71 +97,73 @@ function LivechatFactory(
       const deferred = $q.defer();
       const sessionId = this.LivechatService.constructor.getSessionId();
 
-      if (sessionId && this.LivechatService.constructor.isChatInProgress()) {
-        this.LivechatService.getHistory(
-          this.librarySettings.CORSHost,
-          sessionId,
-        ).then((history) => {
-          if (history) {
-            this.library = new EGainLibrary(this.librarySettings);
-            this.chat = new this.library.Chat();
-            this.eventHandlers = this.chat.GetEventHandlers();
-
-            const endHandler = () => {
-              this.end();
-              deferred.resolve();
-            };
-
-            const setEndHandler = () => {
-              this.setChatEnded();
-              deferred.resolve();
-            };
-
-            this.eventHandlers.OnConnectionInitialized = () => {
-              this.chat.Attach(
-                this.LivechatService.constructor.getSessionId(),
-                this.LivechatService.constructor.getLastRequestId(),
-              );
-            };
-
-            // Making sure the connection will be closed
-            this.eventHandlers.OnConnectSuccess = endHandler;
-            this.eventHandlers.OnConnectionAttached = endHandler;
-            this.eventHandlers.OnAgentMessageReceived = angular.noop;
-            this.eventHandlers.OnSystemMessageReceived = angular.noop;
-            this.eventHandlers.OnAgentJoined = angular.noop;
-            this.eventHandlers.OnErrorOccurred = angular.noop;
-            this.eventHandlers.OnCustTerminateSuccess = setEndHandler;
-            this.eventHandlers.OnConnectionComplete = setEndHandler;
-            this.eventHandlers.OnConnectionFailure = setEndHandler;
-            this.eventHandlers.OnConnectionAttachedFailure = setEndHandler;
-            this.eventHandlers.OnAgentsNotAvailable = setEndHandler;
-
-            this.customer = new this.library.Datatype.CustomerObject();
-
-            return this.LivechatService.getAuthentication().then((samlResponse) => {
-              const entryPoint = samlResponse
-                ? this.countryConfig.entryPoints.sso
-                : this.countryConfig.entryPoints.default;
-
-              this.prepareCustomer(this.customer, samlResponse);
-              this.chat.Initialize(
-                entryPoint,
-                this.languageCode,
-                this.countryCode,
-                this.eventHandlers,
-                'ovh',
-                'v11',
-              );
-            });
-          }
-          return null;
-        }).finally(() => {
-          deferred.resolve();
-        });
-      } else {
+      if (!sessionId || !this.LivechatService.constructor.isChatInProgress()) {
         deferred.resolve();
+        return deferred.promise;
       }
+
+      this.LivechatService.getHistory(
+        this.librarySettings.CORSHost,
+        sessionId,
+      ).then((history) => {
+        if (!history) {
+          return null;
+        }
+
+        this.library = new EGainLibrary(this.librarySettings);
+        this.chat = new this.library.Chat();
+        this.eventHandlers = this.chat.GetEventHandlers();
+
+        const endHandler = () => {
+          this.end();
+          deferred.resolve();
+        };
+
+        const setEndHandler = () => {
+          this.setChatEnded();
+          deferred.resolve();
+        };
+
+        this.eventHandlers.OnConnectionInitialized = () => {
+          this.chat.Attach(
+            this.LivechatService.constructor.getSessionId(),
+            this.LivechatService.constructor.getLastRequestId(),
+          );
+        };
+
+        // Making sure the connection will be closed
+        this.eventHandlers.OnConnectSuccess = endHandler;
+        this.eventHandlers.OnConnectionAttached = endHandler;
+        this.eventHandlers.OnAgentMessageReceived = angular.noop;
+        this.eventHandlers.OnSystemMessageReceived = angular.noop;
+        this.eventHandlers.OnAgentJoined = angular.noop;
+        this.eventHandlers.OnErrorOccurred = angular.noop;
+        this.eventHandlers.OnCustTerminateSuccess = setEndHandler;
+        this.eventHandlers.OnConnectionComplete = setEndHandler;
+        this.eventHandlers.OnConnectionFailure = setEndHandler;
+        this.eventHandlers.OnConnectionAttachedFailure = setEndHandler;
+        this.eventHandlers.OnAgentsNotAvailable = setEndHandler;
+
+        this.customer = new this.library.Datatype.CustomerObject();
+
+        return this.LivechatService.getAuthentication().then((samlResponse) => {
+          const entryPoint = samlResponse
+            ? this.countryConfig.entryPoints.sso
+            : this.countryConfig.entryPoints.default;
+
+          this.prepareCustomer(this.customer, samlResponse);
+          this.chat.Initialize(
+            entryPoint,
+            this.languageCode,
+            this.countryCode,
+            this.eventHandlers,
+            'ovh',
+            'v11',
+          );
+        });
+      }).finally(() => {
+        deferred.resolve();
+      });
 
       return deferred.promise;
     }
@@ -197,21 +201,8 @@ function LivechatFactory(
           const newMsg = {
             time: moment(msg.timeStamp),
             text: msg.body,
+            type: LIVECHAT_MESSAGE_TYPES[msg.sender.type],
           };
-
-          switch (msg.sender.type) {
-            case 'Customer':
-              newMsg.type = this.CHATBOT_MESSAGE_TYPES.user;
-              break;
-            case 'Agent':
-              newMsg.type = this.CHATBOT_MESSAGE_TYPES.agent;
-              break;
-            case 'System':
-              newMsg.type = this.CHATBOT_MESSAGE_TYPES.bot;
-              break;
-            default:
-              break;
-          }
 
           acc.push(newMsg);
 
@@ -227,7 +218,7 @@ function LivechatFactory(
     static isHistoryMessage(msg) {
       return msg.sender
         && msg.sender.type
-        && ['Customer', 'Agent', 'System'].includes(msg.sender.type)
+        && Object.keys(LIVECHAT_MESSAGE_TYPES).includes(msg.sender.type)
         && msg.body
         && msg.timeStamp
         && moment(msg.timeStamp).isValid();
@@ -323,35 +314,39 @@ function LivechatFactory(
 
     prepareCustomer(customer, samlResponse) {
       const emailParam = new this.library.Datatype.CustomerParameter();
-      emailParam.eGainParentObject = 'casemgmt';
-      emailParam.eGainChildObject = 'email_address_contact_point_data';
-      emailParam.eGainAttribute = 'email_address';
-      emailParam.eGainValue = 'customer@ovh.com';
-      emailParam.eGainParamName = 'email_address';
-      emailParam.eGainMinLength = '1';
-      emailParam.eGainMaxLength = '50';
-      emailParam.eGainRequired = '1';
-      emailParam.eGainFieldType = '1';
-      emailParam.eGainPrimaryKey = '1';
-      emailParam.eGainValidationString = '';
+      Object.assign(emailParam, {
+        eGainParentObject: 'casemgmt',
+        eGainChildObject: 'email_address_contact_point_data',
+        eGainAttribute: 'email_address',
+        eGainValue: 'customer@ovh.com',
+        eGainParamName: 'email_address',
+        eGainMinLength: '1',
+        eGainMaxLength: '50',
+        eGainRequired: '1',
+        eGainFieldType: '1',
+        eGainPrimaryKey: '1',
+        eGainValidationString: '',
+      });
       customer.AddCustomerParameter(emailParam);
 
       if (samlResponse) {
         // Use the customer SSO
         const nicParam = new this.library.Datatype.CustomerParameter();
-        nicParam.eGainParentObject = 'casemgmt';
-        nicParam.eGainChildObject = 'activity_data';
-        nicParam.eGainAttribute = 'nichandle';
-        nicParam.eGainValue = '';
-        nicParam.eGainParamName = 'nichandle';
-        nicParam.eGainMinLength = '1';
-        nicParam.eGainMaxLength = '50';
-        nicParam.eGainRequired = '1';
-        nicParam.eGainFieldType = '1';
-        nicParam.eGainPrimaryKey = '0';
-        nicParam.eGainValidationString = '';
-        nicParam.providerAttributeName = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn';
-        nicParam.secureAttribute = '1';
+        Object.assign(nicParam, {
+          eGainParentObject: 'casemgmt',
+          eGainChildObject: 'activity_data',
+          eGainAttribute: 'nichandle',
+          eGainValue: '',
+          eGainParamName: 'nichandle',
+          eGainMinLength: '1',
+          eGainMaxLength: '50',
+          eGainRequired: '1',
+          eGainFieldType: '1',
+          eGainPrimaryKey: '0',
+          eGainValidationString: '',
+          providerAttributeName: 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn',
+          secureAttribute: '1',
+        });
         customer.AddCustomerParameter(nicParam);
 
         this.library.SetSamlResponse(samlResponse);
