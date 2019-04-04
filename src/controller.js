@@ -193,8 +193,9 @@ class ChatbotCtrl {
 
         return contextId ? this.ChatbotService.history(contextId) : [];
       })
+      .catch(() => []) // if history fails
       .then((messages) => {
-        if (messages.length === 0) {
+        if (!messages || isEmpty(messages)) {
           return this.welcome();
         }
         return messages;
