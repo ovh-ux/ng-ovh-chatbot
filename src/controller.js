@@ -234,7 +234,12 @@ class ChatbotCtrl {
   enableScroll() {
     this.$scope.$watch(
       () => this.$element.find('.chatbot-messages')[0].scrollHeight,
-      newY => this.$element.find('.chatbot-body').scrollTop(newY),
+      (newY) => {
+        // wait for the end of the digest before scrolling
+        this.$timeout(() => {
+          this.$element.find('.chatbot-body').scrollTop(newY);
+        });
+      },
     );
   }
 
