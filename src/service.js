@@ -1,3 +1,5 @@
+import get from 'lodash/get';
+
 class ChatbotService {
   /* @ngInject */
   constructor($http, $q, CHATBOT_API_ACTIONS, CHATBOT_MESSAGE_TYPES) {
@@ -48,8 +50,8 @@ class ChatbotService {
     return this.get({
       action: this.CHATBOT_API_ACTIONS.topKnowledge,
       maxKnowledge,
-    }).then(({ data }) => data)
-      .then(({ knowledgeArticles }) => knowledgeArticles.map(article => ({
+    }).then(({ data }) => get(data, 'knowledgeArticles', []))
+      .then(knowledgeArticles => knowledgeArticles.map(article => ({
         text: article.reword,
         options: {},
       })));
