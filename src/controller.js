@@ -37,6 +37,7 @@ class ChatbotCtrl {
     this.loaders = {
       isStarting: false,
       isAsking: false,
+      isGettingSuggestions: false,
     };
 
     this.options = {
@@ -209,7 +210,8 @@ class ChatbotCtrl {
   }
 
   suggest(message) {
-    if (message && message.length > 3) {
+    if (message && message.length > 3 && !this.loaders.isGettingSuggestions) {
+      this.loaders.isGettingSuggestions = true;
       return this.ChatbotService.suggestions(message)
         .then((suggestions) => {
           this.suggestions = suggestions
@@ -217,6 +219,9 @@ class ChatbotCtrl {
             .map(suggestion => suggestion.rootConditionReword)
             .filter((suggestion, index, self) => self.indexOf(suggestion) === index)
             .splice(0, 3);
+        })
+        .finally(() => {
+          this.loaders.isGettingSuggestions = false;
         });
     }
 
