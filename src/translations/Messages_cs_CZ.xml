@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translations>
+   <translation id="chatbot_title">OVH Chat</translation>
+   <translation id="chatbot_input_placeholder">Saisissez votre question…</translation>
+   <translation id="chatbot_input_send">Envoyer</translation>
+   <translation id="chatbot_suggestion_text">Voulez-vous dire…</translation>
+   <translation id="chatbot_button_open">Besoin d'aide ?</translation>
+   <translation id="chatbot_button_show">Afficher le tchat</translation>
+   <translation id="chatbot_button_hide">Masquer le tchat</translation>
+   <translation id="chatbot_button_close">Fermer le tchat</translation>
+   <translation id="chatbot_welcome_message">Bonjour ! Comment puis-je vous aider ?</translation>
+   <translation id="chatbot_survey_message">Êtes-vous satisfait de la réponse ?</translation>
+   <translation id="chatbot_survey_message_details">Avez-vous un commentaire ?</translation>
+   <translation id="chatbot_thanks_message">Merci de votre retour!</translation>
+   <translation id="chatbot_answer_yes">Oui</translation>
+   <translation id="chatbot_answer_no">Non</translation>
+   <translation id="chatbot_answer_ok">Ok</translation>
+   <translation id="chatbot_answer_placeholder">Laisser un commentaire</translation>
+</translations>
