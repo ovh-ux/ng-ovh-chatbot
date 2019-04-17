@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <translations>
-   <translation id="chatbot_title">OVH Chat</translation>
-   <translation id="chatbot_input_placeholder">Saisissez votre question…</translation>
-   <translation id="chatbot_input_send">Envoyer</translation>
-   <translation id="chatbot_suggestion_text">Voulez-vous dire…</translation>
-   <translation id="chatbot_button_open">Besoin d'aide ?</translation>
-   <translation id="chatbot_button_show">Afficher le tchat</translation>
-   <translation id="chatbot_button_hide">Masquer le tchat</translation>
-   <translation id="chatbot_button_close">Fermer le tchat</translation>
-   <translation id="chatbot_welcome_message">Bonjour ! Comment puis-je vous aider ?</translation>
-   <translation id="chatbot_survey_message">Êtes-vous satisfait de la réponse ?</translation>
-   <translation id="chatbot_survey_message_details">Avez-vous un commentaire ?</translation>
-   <translation id="chatbot_thanks_message">Merci de votre retour!</translation>
-   <translation id="chatbot_answer_yes">Oui</translation>
-   <translation id="chatbot_answer_no">Non</translation>
-   <translation id="chatbot_answer_ok">Ok</translation>
-   <translation id="chatbot_answer_placeholder">Laisser un commentaire</translation>
+   <translation id="chatbot_title" qtlid="522318">OVH Chat</translation>
+   <translation id="chatbot_input_placeholder" qtlid="522331">Scrivi la tua domanda...</translation>
+   <translation id="chatbot_input_send" qtlid="52807">Invia</translation>
+   <translation id="chatbot_suggestion_text" qtlid="522344">Vuoi dire...</translation>
+   <translation id="chatbot_button_open" qtlid="435497">Bisogno di aiuto?</translation>
+   <translation id="chatbot_button_show" qtlid="522357">Mostra la chat</translation>
+   <translation id="chatbot_button_hide" qtlid="522370">Nascondi la chat</translation>
+   <translation id="chatbot_button_close" qtlid="522383">Chiudi la chat</translation>
+   <translation id="chatbot_welcome_message" qtlid="522396">Ciao! Come posso aiutarti?</translation>
+   <translation id="chatbot_survey_message" qtlid="522409">Sei soddisfatto della risposta?</translation>
+   <translation id="chatbot_survey_message_details" qtlid="522422">Vuoi lasciare un commento?</translation>
+   <translation id="chatbot_thanks_message" qtlid="522435">Grazie per il tuo feedback!</translation>
+   <translation id="chatbot_answer_yes" qtlid="34776">Sì</translation>
+   <translation id="chatbot_answer_no" qtlid="34788">No</translation>
+   <translation id="chatbot_answer_ok" qtlid="433745">Ok</translation>
+   <translation id="chatbot_answer_placeholder" qtlid="522448">Lascia un commento</translation>
 </translations>
