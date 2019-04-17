@@ -1,3 +1,14 @@
+# [2.0.0](https://github.com/ovh-ux/ng-ovh-chatbot/compare/v2.0.0-beta.0...v2.0.0) (2019-04-17)
+
+
+### Bug Fixes
+
+* **i18n:** retrieve translations ([af833b5](https://github.com/ovh-ux/ng-ovh-chatbot/commit/af833b5))
+* **i18n:** retrieve translations ([#11](https://github.com/ovh-ux/ng-ovh-chatbot/issues/11)) ([87e4d67](https://github.com/ovh-ux/ng-ovh-chatbot/commit/87e4d67))
+* **i18n:** submit translations ([d1f2b9e](https://github.com/ovh-ux/ng-ovh-chatbot/commit/d1f2b9e))
+
+
+
 # [2.0.0-beta.0](https://github.com/ovh-ux/ng-ovh-chatbot/compare/v1.0.4...v2.0.0-beta.0) (2019-04-11)
 
 
