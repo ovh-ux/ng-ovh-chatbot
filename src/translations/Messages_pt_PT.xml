@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translations>
+   <translation id="chatbot_title" qtlid="522318">OVH Chat</translation>
+   <translation id="chatbot_input_placeholder" qtlid="522331">Introduza a sua pergunta…</translation>
+   <translation id="chatbot_input_send" qtlid="52807">Enviar</translation>
+   <translation id="chatbot_suggestion_text" qtlid="522344">Queria dizer…</translation>
+   <translation id="chatbot_button_open" qtlid="435497">Precisa de ajuda?</translation>
+   <translation id="chatbot_button_show" qtlid="522357">Mostrar o chat</translation>
+   <translation id="chatbot_button_hide" qtlid="522370">Ocultar o chat</translation>
+   <translation id="chatbot_button_close" qtlid="522383">Fechar o chat</translation>
+   <translation id="chatbot_welcome_message" qtlid="522396">Olá! Em que posso ajudá-lo?</translation>
+   <translation id="chatbot_survey_message" qtlid="522409">Está satisfeito com a resposta?</translation>
+   <translation id="chatbot_survey_message_details" qtlid="522422">Tem algum comentário que gostaria de deixar?</translation>
+   <translation id="chatbot_thanks_message" qtlid="522435">Obrigado pela sua mensagem!</translation>
+   <translation id="chatbot_answer_yes" qtlid="34776">Sim</translation>
+   <translation id="chatbot_answer_no" qtlid="34788">Não</translation>
+   <translation id="chatbot_answer_ok" qtlid="433745">Ok</translation>
+   <translation id="chatbot_answer_placeholder" qtlid="522448">Deixar um comentário</translation>
+</translations>

@@ -4,7 +4,7 @@
    <translation id="chatbot_input_placeholder" qtlid="522331">Saisissez votre question…</translation>
    <translation id="chatbot_input_send" qtlid="52807">Envoyer</translation>
    <translation id="chatbot_suggestion_text" qtlid="522344">Voulez-vous dire…</translation>
-   <translation id="chatbot_button_open" qtlid="435497">Besoin d'aide ?</translation>
+   <translation id="chatbot_button_open" qtlid="435497">Besoin d'aide?</translation>
    <translation id="chatbot_button_show" qtlid="522357">Afficher le tchat</translation>
    <translation id="chatbot_button_hide" qtlid="522370">Masquer le tchat</translation>
    <translation id="chatbot_button_close" qtlid="522383">Fermer le tchat</translation>
