@@ -25,6 +25,7 @@ angular
   .component('ovhChatbotIcons', { template: iconsTemplate })
   .run(/* @ngTranslationsInject:xml ./translations */)
   .constant('CHATBOT_MESSAGE_TYPES', {
+    user: 'user',
     agent: 'agent',
     bot: 'bot',
     postback: 'postback',

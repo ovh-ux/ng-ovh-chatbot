@@ -20,9 +20,9 @@
                  data-ng-repeat="message in $ctrl.messages track by $index"
                  data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.postback"
                  data-ng-class="{'chatbot-message-user': message.type === $ctrl.MESSAGE_TYPES.user,
-                                 'chatbot-message-agent': message.type === $ctrl.MESSAGE_TYPES.agent
+                                 'chatbot-message-agent': message.type === $ctrl.MESSAGE_TYPES.agent,
                                  'chatbot-message-bot': message.type !== $ctrl.MESSAGE_TYPES.user
-                                                        && message.type !== $ctrl.MESSAGE_TYPES.agent,">
+                                                        && message.type !== $ctrl.MESSAGE_TYPES.agent}">
                 <div class="chatbot-avatar" data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.user && message.type !== $ctrl.MESSAGE_TYPES.agent">
                     <svg viewbox="0 0 32 32">
                         <use href="#chatbot-svg-avatar" />
@@ -78,7 +78,7 @@
                     </div>
 
                     <div class="chatbot-chat-survey"
-                         data-ng-if="message.type === $ctrl.MESSAGE_TYPES.chatsurvey">
+                         data-ng-if="message.type === $ctrl.MESSAGE_TYPES.livechatsurvey">
                         <form class="chatbot-chat-survey-form" name="chatSurveyForm">
                             <p data-translate="livechat_survey_question1"></p>
                             <label>

@@ -142,14 +142,12 @@ class ChatbotCtrl {
 
     if (!this.livechat) {
       this.loaders.isAsking = true;
-      this.postMessage(this.message)
+      this.postMessage(messageToSend)
         .finally(() => {
           this.loaders.isAsking = false;
-          this.message = '';
         });
     } else {
-      this.postChatMessage(this.message);
-      this.message = '';
+      this.postChatMessage(messageToSend);
     }
   }
 
@@ -209,10 +207,11 @@ class ChatbotCtrl {
 
   postChatMessage(messageText) {
     this.livechatFactory.sendMessageToAgent(messageText);
-    this.pushMessageToUI(
-      { text: messageText, time: moment().format('LT') },
-      this.MESSAGE_TYPES.user,
-    );
+    this.pushMessageToUI({
+      text: messageText,
+      time: moment().format('LT'),
+      type: this.MESSAGE_TYPES.user,
+    });
   }
 
   welcome() {
@@ -281,13 +280,11 @@ class ChatbotCtrl {
   start() {
     // Check livechat initialization
     if (!this.livechatFactory) {
-      this.pushMessageToUI(
-        {
-          text: this.$translate.instant('livechat_init_error'),
-          time: moment().format('LT'),
-        },
-        this.MESSAGE_TYPES.bot,
-      );
+      this.pushMessageToUI({
+        text: this.$translate.instant('livechat_init_error'),
+        time: moment().format('LT'),
+        type: this.MESSAGE_TYPES.bot,
+      });
       return;
     }
 
@@ -296,23 +293,21 @@ class ChatbotCtrl {
       this.startLivechat();
     } else {
       // Ask whether to end the concurrent session
-      this.pushMessageToUI(
-        {
-          text: this.$translate.instant('livechat_concurrent_session'),
-          time: moment().format('LT'),
-          rewords: [
-            {
-              action: 'endConcurrentLivechat',
-              text: this.$translate.instant('chatbot_answer_yes'),
-            },
-            {
-              action: 'fullClose',
-              text: this.$translate.instant('chatbot_answer_no'),
-            },
-          ],
-        },
-        this.MESSAGE_TYPES.bot,
-      );
+      this.pushMessageToUI({
+        text: this.$translate.instant('livechat_concurrent_session'),
+        time: moment().format('LT'),
+        rewords: [
+          {
+            action: 'endConcurrentLivechat',
+            text: this.$translate.instant('chatbot_answer_yes'),
+          },
+          {
+            action: 'fullClose',
+            text: this.$translate.instant('chatbot_answer_no'),
+          },
+        ],
+        type: this.MESSAGE_TYPES.bot,
+      });
     }
 
     this.enableDrag();
@@ -366,33 +361,38 @@ class ChatbotCtrl {
   }
 
   onLivechatAgentMessage(msg) {
-    this.pushMessageToUI(
-      { text: msg.Message, time: moment().format('LT') },
-      this.MESSAGE_TYPES.agent,
-    );
+    this.pushMessageToUI({
+      text: msg.Message,
+      time: moment().format('LT'),
+      type: this.MESSAGE_TYPES.agent,
+    });
   }
 
   onLivechatSystemMessage(msg) {
-    this.pushMessageToUI(
-      { text: msg.Message, time: moment().format('LT') },
-      this.MESSAGE_TYPES.bot,
-    );
+    this.pushMessageToUI({
+      text: msg.Message,
+      time: moment().format('LT'),
+      type: this.MESSAGE_TYPES.bot,
+    });
   }
 
   onLivechatHistory(messages) {
     messages.forEach((msg) => {
-      this.pushMessageToUI(
-        { text: msg.text, time: msg.time.format('LT') },
-        msg.type,
-      );
+      this.pushMessageToUI({
+        text: msg.text,
+        time: msg.time.format('LT'),
+        type: msg.type,
+      });
     });
   }
 
   onLivechatSurvey(sessionId) {
-    this.pushMessageToUI(
-      { text: this.$translate.instant('livechat_survey'), time: moment().format('LT'), sessionId },
-      this.MESSAGE_TYPES.chatsurvey,
-    );
+    this.pushMessageToUI({
+      text: this.$translate.instant('livechat_survey'),
+      time: moment().format('LT'),
+      sessionId,
+      type: this.MESSAGE_TYPES.livechatsurvey,
+    });
   }
 
   sendLivechatSurvey(msg) {
@@ -400,40 +400,44 @@ class ChatbotCtrl {
       this.loaders.isSendingSurvey = true;
 
       this.livechatFactory.sendSurvey(msg.sessionId, msg.survey).then(() => {
-        this.pushMessageToUI(
-          { text: this.$translate.instant('livechat_survey_thanks'), time: moment().format('LT') },
-          this.MESSAGE_TYPES.bot,
-        );
-        this.hideLivechatSurvey();
+        this.pushMessageToUI({
+          text: this.$translate.instant('livechat_survey_thanks'),
+          time: moment().format('LT'),
+          type: this.MESSAGE_TYPES.bot,
+        });
+        this.removeLivechatSurvey();
       }).catch(() => {
-        this.pushMessageToUI(
-          { text: this.$translate.instant('livechat_survey_error'), time: moment().format('LT') },
-          this.MESSAGE_TYPES.bot,
-        );
+        this.pushMessageToUI({
+          text: this.$translate.instant('livechat_survey_error'),
+          time: moment().format('LT'),
+          type: this.MESSAGE_TYPES.bot,
+        });
       }).finally(() => {
         this.loaders.isSendingSurvey = false;
       });
     }
   }
 
-  hideLivechatSurvey() {
-    this.messages = filter(this.messages, msg => msg.type !== this.MESSAGE_TYPES.chatsurvey);
+  removeLivechatSurvey() {
+    this.messages = filter(this.messages, msg => msg.type !== this.MESSAGE_TYPES.livechatsurvey);
   }
 
   onLivechatNoAgentsAvailable() {
     this.livechat = false;
-    this.pushMessageToUI(
-      { text: this.$translate.instant('livechat_no_agents_available'), time: moment().format('LT') },
-      this.MESSAGE_TYPES.bot,
-    );
+    this.pushMessageToUI({
+      text: this.$translate.instant('livechat_no_agents_available'),
+      time: moment().format('LT'),
+      type: this.MESSAGE_TYPES.bot,
+    });
   }
 
   onLivechatConnectionFailure() {
     this.livechat = false;
-    this.pushMessageToUI(
-      { text: this.$translate.instant('livechat_connection_failure'), time: moment().format('LT') },
-      this.MESSAGE_TYPES.bot,
-    );
+    this.pushMessageToUI({
+      text: this.$translate.instant('livechat_connection_failure'),
+      time: moment().format('LT'),
+      type: this.MESSAGE_TYPES.bot,
+    });
   }
 
   onLivechatError(err) {
@@ -459,10 +463,11 @@ class ChatbotCtrl {
     }
 
     if (!pass) {
-      this.pushMessageToUI(
-        { text, time: moment().format('LT') },
-        this.MESSAGE_TYPES.bot,
-      );
+      this.pushMessageToUI({
+        text,
+        time: moment().format('LT'),
+        type: this.MESSAGE_TYPES.bot,
+      });
     }
   }
 
