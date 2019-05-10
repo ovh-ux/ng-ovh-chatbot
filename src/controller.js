@@ -156,6 +156,7 @@ class ChatbotCtrl {
   postback(postbackMessage) {
     if (postbackMessage.action) {
       this.doAction(postbackMessage.action);
+      return;
     }
 
     this.loaders.isAsking = true;
@@ -282,11 +283,7 @@ class ChatbotCtrl {
   start() {
     // Check livechat initialization
     if (!this.livechatFactory) {
-      this.pushMessageToUI({
-        text: this.$translate.instant('livechat_init_error'),
-        time: moment().format('LT'),
-        type: this.MESSAGE_TYPES.bot,
-      });
+      this.pushMessageToUI(this.botMessage('livechat_init_error'));
       return;
     }
 
@@ -370,10 +367,18 @@ class ChatbotCtrl {
   }
 
   endConcurrentLivechat() {
-    // Use a separate instance to prevent interferences
-    // with the next session
-    const killerFactory = new this.LivechatFactory();
-    killerFactory.endConcurrentSession();
+    this.LivechatService.getCountryConfiguration(this.countryCode).then((countryConfig) => {
+      // Use a separate instance to prevent interferences
+      // with the next session
+      const killerFactory = new this.LivechatFactory(
+        countryConfig,
+        this.countryCode,
+        this.languageCode,
+      );
+      killerFactory.endConcurrentSession();
+    }).catch(() => {
+      this.pushMessageToUI(this.botMessage('livechat_init_error'));
+    });
   }
 
   onLivechatAgentMessage(msg) {
