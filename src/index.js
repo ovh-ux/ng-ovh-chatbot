@@ -50,6 +50,10 @@ angular
     Customer: 'user',
     Agent: 'agent',
     System: 'bot',
+  })
+  .constant('LIVECHAT_CLOSED_REASONS', {
+    outOfBusinessHours: 'out_of_business_hours',
+    closingDay: 'closing_day',
   });
 
 export default moduleName;

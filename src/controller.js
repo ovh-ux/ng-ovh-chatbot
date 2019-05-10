@@ -18,6 +18,7 @@ class ChatbotCtrl {
     CHATBOT_SURVEY_STEPS,
     LivechatFactory,
     LivechatService,
+    LIVECHAT_CLOSED_REASONS,
   ) {
     this.$element = $element;
     this.$q = $q;
@@ -31,6 +32,7 @@ class ChatbotCtrl {
     this.SURVEY_STEPS = CHATBOT_SURVEY_STEPS;
     this.LivechatFactory = LivechatFactory;
     this.LivechatService = LivechatService;
+    this.LIVECHAT_CLOSED_REASONS = LIVECHAT_CLOSED_REASONS;
   }
 
   $onInit() {
@@ -290,7 +292,7 @@ class ChatbotCtrl {
 
     // Check for concurrent session in another tab / window
     if (!this.livechatFactory.hasConcurrentSession()) {
-      this.startLivechat();
+      this.startLivechat('HLP', 'WEB', 'Hosting');
     } else {
       // Ask whether to end the concurrent session
       this.pushMessageToUI({
@@ -340,10 +342,24 @@ class ChatbotCtrl {
       }); */
   }
 
-  startLivechat() {
+  startLivechat(category, universe, product) {
     this.started = true;
     this.livechat = true;
-    this.livechatFactory.start().catch(() => {
+    this.livechatFactory.start(category, universe, product).catch((err) => {
+      if (err) {
+        if (err.closedReason === this.LIVECHAT_CLOSED_REASONS.outOfBusinessHours) {
+          this.pushMessageToUI(this.botMessage('livechat_closed_out_of_business_hours'));
+          this.pushMessageToUI(this.botMessage('livechat_closed_create_a_ticket'));
+          return;
+        }
+
+        if (err.closedReason === this.LIVECHAT_CLOSED_REASONS.closingDay) {
+          this.pushMessageToUI(this.botMessage('livechat_closed_closing_day'));
+          this.pushMessageToUI(this.botMessage('livechat_closed_create_a_ticket'));
+          return;
+        }
+      }
+
       this.onLivechatConnectionFailure();
     });
   }

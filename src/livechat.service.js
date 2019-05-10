@@ -14,6 +14,17 @@ class LivechatService {
       .catch(() => null);
   }
 
+  getQueue(universe, category) {
+    return this.$http({
+      method: 'GET',
+      url: '/engine/2api/chat/queue',
+      params: {
+        universe,
+        category,
+      },
+    }).then(response => response && response.data);
+  }
+
   getAuthentication() {
     if (!this.$location.host().includes('ovh.com')) {
       return this.$q.resolve(null);

@@ -49,7 +49,10 @@ function LivechatFactory(
       });
     }
 
-    start(restoredSession = null) {
+    start(category, universe, product, restoredSession = null) {
+      let queuePromise = $q.resolve();
+      let queue = null;
+
       this.library = new EGainLibrary(this.librarySettings);
       this.chat = new this.library.Chat();
       this.eventHandlers = this.chat.GetEventHandlers();
@@ -59,12 +62,33 @@ function LivechatFactory(
 
       this.customer = new this.library.Datatype.CustomerObject();
 
-      return this.LivechatService.getAuthentication().then((samlResponse) => {
+      if (!restoredSession) {
+        // Get the queue name and opening hours
+        queuePromise = this.LivechatService.getQueue(category, universe).then((queueConfig) => {
+          if (!queueConfig) {
+            return $q.reject();
+          }
+
+          if (!queueConfig.isOpen || !queueConfig.name) {
+            return $q.reject(queueConfig);
+          }
+
+          queue = queueConfig.name;
+          return true;
+        });
+      }
+
+      return queuePromise.then(
+        () => this.LivechatService.getAuthentication(),
+      ).then((samlResponse) => {
         const entryPoint = samlResponse
           ? this.countryConfig.entryPoints.sso
           : this.countryConfig.entryPoints.default;
 
-        this.prepareCustomer(this.customer, samlResponse);
+        if (!restoredSession) {
+          this.prepareCustomer(this.customer, queue, product, samlResponse);
+        }
+
         this.chat.Initialize(
           entryPoint,
           this.languageCode,
@@ -73,10 +97,11 @@ function LivechatFactory(
           'ovh',
           'v11',
         );
+
         return true;
-      }).catch(() => {
+      }).catch((err) => {
         this.setChatEnded();
-        return $q.reject();
+        return $q.reject(err);
       });
     }
 
@@ -180,7 +205,7 @@ function LivechatFactory(
         sessionId,
       ).then((history) => {
         if (history) {
-          return this.start(history);
+          return this.start(null, null, null, history);
         }
 
         this.setChatEnded();
@@ -312,7 +337,7 @@ function LivechatFactory(
       };
     }
 
-    prepareCustomer(customer, samlResponse) {
+    prepareCustomer(customer, queue, product, samlResponse) {
       const emailParam = new this.library.Datatype.CustomerParameter();
       Object.assign(emailParam, {
         eGainParentObject: 'casemgmt',
@@ -328,6 +353,38 @@ function LivechatFactory(
         eGainValidationString: '',
       });
       customer.AddCustomerParameter(emailParam);
+
+      const queueParam = new this.library.Datatype.CustomerParameter();
+      Object.assign(queueParam, {
+        eGainParentObject: 'casemgmt',
+        eGainChildObject: 'activity_data',
+        eGainAttribute: 'queue',
+        eGainValue: queue,
+        eGainParamName: 'queue',
+        eGainMinLength: '1',
+        eGainMaxLength: '50',
+        eGainRequired: '1',
+        eGainFieldType: '1',
+        eGainPrimaryKey: '0',
+        eGainValidationString: '',
+      });
+      customer.AddCustomerParameter(queueParam);
+
+      const productParam = new this.library.Datatype.CustomerParameter();
+      Object.assign(productParam, {
+        eGainParentObject: 'casemgmt',
+        eGainChildObject: 'activity_data',
+        eGainAttribute: 'product',
+        eGainValue: product,
+        eGainParamName: 'product',
+        eGainMinLength: '1',
+        eGainMaxLength: '50',
+        eGainRequired: '1',
+        eGainFieldType: '1',
+        eGainPrimaryKey: '0',
+        eGainValidationString: '',
+      });
+      customer.AddCustomerParameter(productParam);
 
       if (samlResponse) {
         // Use the customer SSO

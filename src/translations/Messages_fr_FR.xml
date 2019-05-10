@@ -18,6 +18,9 @@
    <translation id="chatbot_answer_placeholder" qtlid="522448">Laisser un commentaire</translation>
 
    <translation id="livechat_init_error">Oups... la connexion avec le conseiller est impossible. Rechargez la page, puis réessayez.</translation>
+   <translation id="livechat_closed_out_of_business_hours">Merci d'avoir contacté OVH. Le Livechat est actuellement fermé.</translation>
+   <translation id="livechat_closed_closing_day">Merci d'avoir contacté OVH. Notre support local est fermé aujourd'hui.</translation>
+   <translation id="livechat_closed_create_a_ticket">Vous pouvez ouvrir un ticket depuis votre Manager OVH et nous vous assisterons lors du prochain jour ouvré.</translation>
    <translation id="livechat_survey">Votre avis nous importe ! Répondez à ce rapide questionaire pour nous en dire plus.</translation>
    <translation id="livechat_survey_send">Envoyer</translation>
    <translation id="livechat_survey_thanks">Le questionnaire a bien été envoyé. Merci de votre participation !</translation>
