@@ -47,6 +47,7 @@ class ChatbotCtrl {
       isAsking: false,
       isGettingSuggestions: false,
       isSendingSurvey: false,
+      isAgentTyping: false,
     };
 
     this.options = {
@@ -69,6 +70,8 @@ class ChatbotCtrl {
           onConnectionFailure: this.onLivechatConnectionFailure,
           onError: this.onLivechatError,
           onNoAgentsAvailable: this.onLivechatNoAgentsAvailable,
+          onAgentStartTyping: this.onLivechatAgentStartTyping,
+          onAgentStopTyping: this.onLivechatAgentStopTyping,
         }),
       );
 
@@ -359,6 +362,14 @@ class ChatbotCtrl {
     }).catch(() => {
       this.pushMessageToUI(this.botMessage('livechat_init_error'));
     });
+  }
+
+  onLivechatAgentStartTyping() {
+    this.loaders.isAgentTyping = true;
+  }
+
+  onLivechatAgentStopTyping() {
+    this.loaders.isAgentTyping = false;
   }
 
   onLivechatAgentMessage(msg) {

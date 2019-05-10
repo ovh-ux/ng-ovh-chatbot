@@ -335,6 +335,18 @@ function LivechatFactory(
           this.customHandlers.onError();
         }
       };
+
+      this.eventHandlers.OnAgentStartTyping = () => {
+        if (isFunction(this.customHandlers.onAgentStartTyping)) {
+          this.customHandlers.onAgentStartTyping();
+        }
+      };
+
+      this.eventHandlers.OnAgentStopTyping = () => {
+        if (isFunction(this.customHandlers.onAgentStopTyping)) {
+          this.customHandlers.onAgentStopTyping();
+        }
+      };
     }
 
     prepareCustomer(customer, queue, product, samlResponse) {
