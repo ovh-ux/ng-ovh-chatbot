@@ -61,43 +61,15 @@ class ChatbotCtrl {
       this.livechatFactory = new this.LivechatFactory(
         countryConfig,
         this.countryCode,
-        this.languageCode, {
-          onAgentMessage: (msg) => {
-            this.$scope.$apply(() => {
-              this.onLivechatAgentMessage(msg);
-            });
-          },
-          onSystemMessage: (msg) => {
-            this.$scope.$apply(() => {
-              this.onLivechatSystemMessage(msg);
-            });
-          },
-          onHistory: (history) => {
-            this.$scope.$apply(() => {
-              this.onLivechatHistory(history);
-            });
-          },
-          onSurvey: (sessionId) => {
-            this.$scope.$apply(() => {
-              this.onLivechatSurvey(sessionId);
-            });
-          },
-          onConnectionFailure: () => {
-            this.$scope.$apply(() => {
-              this.onLivechatConnectionFailure();
-            });
-          },
-          onError: () => {
-            this.$scope.$apply(() => {
-              this.onLivechatError();
-            });
-          },
-          onNoAgentsAvailable: () => {
-            this.$scope.$apply(() => {
-              this.onLivechatNoAgentsAvailable();
-            });
-          },
-        },
+        this.languageCode, this.livechatCallbacks({
+          onAgentMessage: this.onLivechatAgentMessage,
+          onSystemMessage: this.onLivechatSystemMessage,
+          onHistory: this.onLivechatHistory,
+          onSurvey: this.onLivechatSurvey,
+          onConnectionFailure: this.onLivechatConnectionFailure,
+          onError: this.onLivechatError,
+          onNoAgentsAvailable: this.onLivechatNoAgentsAvailable,
+        }),
       );
 
       this.livechatFactory.restore().then((chatRestored) => {
@@ -114,6 +86,22 @@ class ChatbotCtrl {
     }).catch(() => {
       this.LivechatFactory = null;
     });
+  }
+
+  livechatCallbacks(callbacks) {
+    const boundCallbacks = {};
+
+    Object.entries(callbacks).forEach(([event, callback]) => {
+      const boundCallback = callback.bind(this);
+
+      boundCallbacks[event] = ((...args) => {
+        this.$scope.$apply(() => {
+          boundCallback(...args);
+        });
+      });
+    });
+
+    return boundCallbacks;
   }
 
   pushMessageToUI(message) {
