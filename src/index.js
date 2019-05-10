@@ -54,6 +54,7 @@ angular
   .constant('LIVECHAT_CLOSED_REASONS', {
     outOfBusinessHours: 'out_of_business_hours',
     closingDay: 'closing_day',
+    holiday: 'holiday',
   });
 
 export default moduleName;

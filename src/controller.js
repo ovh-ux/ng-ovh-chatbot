@@ -343,18 +343,10 @@ class ChatbotCtrl {
     this.started = true;
     this.livechat = true;
     this.livechatFactory.start(category, universe, product).catch((err) => {
-      if (err) {
-        if (err.closedReason === this.LIVECHAT_CLOSED_REASONS.outOfBusinessHours) {
-          this.pushMessageToUI(this.botMessage('livechat_closed_out_of_business_hours'));
-          this.pushMessageToUI(this.botMessage('livechat_closed_create_a_ticket'));
-          return;
-        }
-
-        if (err.closedReason === this.LIVECHAT_CLOSED_REASONS.closingDay) {
-          this.pushMessageToUI(this.botMessage('livechat_closed_closing_day'));
-          this.pushMessageToUI(this.botMessage('livechat_closed_create_a_ticket'));
-          return;
-        }
+      if (err && Object.values(this.LIVECHAT_CLOSED_REASONS).includes(err.closedReason)) {
+        this.pushMessageToUI(this.botMessage(`livechat_closed_${err.closedReason}`));
+        this.pushMessageToUI(this.botMessage('livechat_closed_create_a_ticket'));
+        return;
       }
 
       this.onLivechatConnectionFailure();
