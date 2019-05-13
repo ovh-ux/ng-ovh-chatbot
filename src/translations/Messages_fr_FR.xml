@@ -34,7 +34,7 @@
    <translation id="livechat_survey_answer_unsatisfied">Non satisfait</translation>
    <translation id="livechat_connection_failure">Oups... la connexion avec le conseiller a été interrompue.</translation>
    <translation id="livechat_error">Oups... une erreur est survenue. Le dernier message n'a peut être pas été envoyé.</translation>
-   <translation id="livechat_no_agents_available">Aucun conseiller n'est disponible actuellement.</translation>
+   <translation id="livechat_no_agents_available">Aucun live agent n'est disponible pour le moment. Nous vous prions d'accepter nos excuses pour la gêne occasionnée.</translation>
    <translation id="livechat_concurrent_session">Oups... Il semblerait qu'une autre session de chat soit déjà ouverte.
 Souhaitez-vous l'arrêter et en démarrer une nouvelle ?</translation>
 </translations>

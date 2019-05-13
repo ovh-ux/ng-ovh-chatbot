@@ -55,6 +55,7 @@ angular
     outOfBusinessHours: 'out_of_business_hours',
     closingDay: 'closing_day',
     holiday: 'holiday',
-  });
+  })
+  .constant('LIVECHAT_NOT_AGENT', 'no_agent_available');
 
 export default moduleName;

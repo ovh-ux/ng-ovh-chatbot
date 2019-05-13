@@ -19,6 +19,7 @@ class ChatbotCtrl {
     LivechatFactory,
     LivechatService,
     LIVECHAT_CLOSED_REASONS,
+    LIVECHAT_NOT_AGENT,
   ) {
     this.$element = $element;
     this.$q = $q;
@@ -33,6 +34,7 @@ class ChatbotCtrl {
     this.LivechatFactory = LivechatFactory;
     this.LivechatService = LivechatService;
     this.LIVECHAT_CLOSED_REASONS = LIVECHAT_CLOSED_REASONS;
+    this.LIVECHAT_NOT_AGENT = LIVECHAT_NOT_AGENT;
   }
 
   $onInit() {
@@ -290,9 +292,7 @@ class ChatbotCtrl {
       this.startLivechat('HLP', 'WEB', 'Hosting');
     } else {
       // Ask whether to end the concurrent session
-      this.pushMessageToUI({
-        text: this.$translate.instant('livechat_concurrent_session'),
-        time: moment().format('LT'),
+      this.pushMessageToUI(this.botMessage('livechat_concurrent_session', {
         rewords: [
           {
             action: 'endConcurrentLivechat',
@@ -303,8 +303,7 @@ class ChatbotCtrl {
             text: this.$translate.instant('chatbot_answer_no'),
           },
         ],
-        type: this.MESSAGE_TYPES.bot,
-      });
+      }));
     }
 
     this.enableDrag();
@@ -344,6 +343,11 @@ class ChatbotCtrl {
       if (err && Object.values(this.LIVECHAT_CLOSED_REASONS).includes(err.closedReason)) {
         this.pushMessageToUI(this.botMessage(`livechat_closed_${err.closedReason}`));
         this.pushMessageToUI(this.botMessage('livechat_closed_create_a_ticket'));
+        return;
+      }
+
+      if (err === this.LIVECHAT_NOT_AGENT) {
+        this.pushMessageToUI(this.botMessage('livechat_no_agents_available'));
         return;
       }
 
@@ -422,18 +426,10 @@ class ChatbotCtrl {
       this.loaders.isSendingSurvey = true;
 
       this.livechatFactory.sendSurvey(msg.sessionId, msg.survey).then(() => {
-        this.pushMessageToUI({
-          text: this.$translate.instant('livechat_survey_thanks'),
-          time: moment().format('LT'),
-          type: this.MESSAGE_TYPES.bot,
-        });
+        this.pushMessageToUI(this.botMessage('livechat_survey_thanks'));
         this.removeLivechatSurvey();
       }).catch(() => {
-        this.pushMessageToUI({
-          text: this.$translate.instant('livechat_survey_error'),
-          time: moment().format('LT'),
-          type: this.MESSAGE_TYPES.bot,
-        });
+        this.pushMessageToUI(this.botMessage('livechat_survey_error'));
       }).finally(() => {
         this.loaders.isSendingSurvey = false;
       });
@@ -446,20 +442,12 @@ class ChatbotCtrl {
 
   onLivechatNoAgentsAvailable() {
     this.livechat = false;
-    this.pushMessageToUI({
-      text: this.$translate.instant('livechat_no_agents_available'),
-      time: moment().format('LT'),
-      type: this.MESSAGE_TYPES.bot,
-    });
+    this.pushMessageToUI(this.botMessage('livechat_no_agents_available'));
   }
 
   onLivechatConnectionFailure() {
     this.livechat = false;
-    this.pushMessageToUI({
-      text: this.$translate.instant('livechat_connection_failure'),
-      time: moment().format('LT'),
-      type: this.MESSAGE_TYPES.bot,
-    });
+    this.pushMessageToUI(this.botMessage('livechat_connection_failure'));
   }
 
   onLivechatError(err) {

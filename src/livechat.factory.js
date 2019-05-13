@@ -15,6 +15,7 @@ function LivechatFactory(
   LivechatService,
   CHATBOT_MESSAGE_TYPES,
   LIVECHAT_MESSAGE_TYPES,
+  LIVECHAT_NOT_AGENT,
 ) {
   return class {
     constructor(countryConfig, languageCode, countryCode, handlers) {
@@ -25,6 +26,7 @@ function LivechatFactory(
       this.$window = $window;
       this.CHATBOT_MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
       this.LIVECHAT_MESSAGE_TYPES = LIVECHAT_MESSAGE_TYPES;
+      this.LIVECHAT_NOT_AGENT = LIVECHAT_NOT_AGENT;
       this.LivechatService = LivechatService;
       this.countryConfig = countryConfig;
       this.languageCode = languageCode;
@@ -89,21 +91,32 @@ function LivechatFactory(
         const entryPoint = samlResponse
           ? this.countryConfig.entryPoints.sso
           : this.countryConfig.entryPoints.default;
+        let availabilityPromise = $q.resolve();
 
         if (!restoredSession) {
-          this.prepareCustomer(this.customer, queue, product, samlResponse);
+          availabilityPromise = this.LivechatService.getAgentAvailability(
+            this.librarySettings.CORSHost,
+            entryPoint,
+          );
         }
 
-        this.chat.Initialize(
-          entryPoint,
-          this.languageCode,
-          this.countryCode,
-          this.eventHandlers,
-          'ovh',
-          'v11',
-        );
+        // Check agent availability
+        return availabilityPromise.then(() => {
+          if (!restoredSession) {
+            this.prepareCustomer(this.customer, queue, product, samlResponse);
+          }
 
-        return true;
+          this.chat.Initialize(
+            entryPoint,
+            this.languageCode,
+            this.countryCode,
+            this.eventHandlers,
+            'ovh',
+            'v11',
+          );
+
+          return true;
+        }).catch(() => $q.reject(this.LIVECHAT_NOT_AGENT));
       }).catch((err) => {
         this.setChatEnded();
         return $q.reject(err);

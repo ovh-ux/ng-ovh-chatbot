@@ -38,6 +38,22 @@ class LivechatService {
       .catch(() => null);
   }
 
+  getAgentAvailability(livechatHost, entryPoint) {
+    return this.$http({
+      method: 'GET',
+      url: `${livechatHost}/egain/chat/entrypoint/agentAvailability/${entryPoint}`,
+      headers: {
+        Accept: 'application/json',
+      },
+    }).then((response) => {
+      if (response && response.data && response.data.available) {
+        return true;
+      }
+
+      return this.$q.reject();
+    });
+  }
+
   getHistory(livechatHost, sessionId) {
     return this.$http({
       method: 'POST',

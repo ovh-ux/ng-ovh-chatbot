@@ -1,9 +1,9 @@
 {
   "L10N_DELAY_TIME_PROMPT": "Délai (en minutes)",
-  "L10N_EXIT_TXT": "<STRONG>Merci pour votre visite.</STRONG><BR><BR> Pour toute question supplémentaire, vous pouvez nous contacter par e-mail ou par téléphone.",
-  "L10N_LINES_ARE_BUSY": "<b>Les lignes sont actuellement occupées. Veuillez réessayer ultérieurement.</b>",
-  "L10N_NO_AGENTS_AVAILABLE": "<b>Aucun agent n'est disponible actuellement.</b>",
-  "L10N_SYSTEM_CANNOT_ASSIGN_AGENT": "<b>Le système ne peut affecter aucun agent à la requête.</b>",
-  "L10N_MSG_CMB_FAILURE": "<b>ÉCHEC DE LA CONNEXION CMB, IMPOSSIBLE DE POURSUIVRE LA DISCUSSION</b>",
+  "L10N_EXIT_TXT": "Merci pour votre visite.",
+  "L10N_LINES_ARE_BUSY": "Aucun live agent n'est disponible pour le moment. Nous vous prions d'accepter nos excuses pour la gêne occasionnée.",
+  "L10N_NO_AGENTS_AVAILABLE": "Aucun live agent n'est disponible pour le moment. Nous vous prions d'accepter nos excuses pour la gêne occasionnée.",
+  "L10N_SYSTEM_CANNOT_ASSIGN_AGENT": "Le système ne peut affecter aucun agent à la requête.",
+  "L10N_MSG_CMB_FAILURE": "Oups... la connexion avec le conseiller a été interrompue.",
   "error_delay_time": "Saisissez un délai valide"
 }
