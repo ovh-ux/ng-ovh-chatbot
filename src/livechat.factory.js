@@ -241,6 +241,19 @@ function LivechatFactory(
             return acc;
           }
 
+          if (this.constructor.isWelcomeMessage(msg.body)
+            && msg.sender.type === 'System') {
+            const newMsg = {
+              time: moment(msg.timeStamp),
+              text: msg.body.replace('WELCOME_MESSAGE#', ''),
+              type: LIVECHAT_MESSAGE_TYPES.Welcome,
+            };
+
+            acc.push(newMsg);
+
+            return acc;
+          }
+
           const newMsg = {
             time: moment(msg.timeStamp),
             text: msg.body,
@@ -265,6 +278,10 @@ function LivechatFactory(
         && msg.body
         && msg.timeStamp
         && moment(msg.timeStamp).isValid();
+    }
+
+    static isWelcomeMessage(msg) {
+      return msg.startsWith('WELCOME_MESSAGE#');
     }
 
     initEventHandlers(restoredSession) {
@@ -304,6 +321,14 @@ function LivechatFactory(
       };
 
       this.eventHandlers.OnSystemMessageReceived = (systemMessage) => {
+        // Automatic welcome message based on agent name
+        if (this.constructor.isWelcomeMessage(systemMessage.Message)
+          && isFunction(this.customHandlers.onWelcomeMessage)) {
+          this.customHandlers.onWelcomeMessage(systemMessage.Message.replace('WELCOME_MESSAGE#', ''));
+          return;
+        }
+
+        // Other system messages
         if (isFunction(this.customHandlers.onSystemMessage)) {
           this.customHandlers.onSystemMessage(systemMessage);
         }

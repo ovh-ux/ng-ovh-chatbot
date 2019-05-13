@@ -19,6 +19,7 @@
 
    <translation id="livechat_transfer">Vous allez être transféré vers un conseiller.</translation>
    <translation id="livechat_waiting">Merci de patienter, un conseiller va vous rejoindre.</translation>
+   <translation id="livechat_welcome">Bonjour, je m'appelle {{name}}, en quoi puis-je vous aider ?</translation>
    <translation id="livechat_init_error">Oups... la connexion avec le conseiller est impossible. Rechargez la page, puis réessayez.</translation>
    <translation id="livechat_closed_out_of_business_hours">Merci d'avoir contacté OVH. Le Livechat est actuellement fermé.</translation>
    <translation id="livechat_closed_closing_day">Merci d'avoir contacté OVH. Notre support local est fermé aujourd'hui.</translation>

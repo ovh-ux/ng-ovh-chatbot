@@ -1,6 +1,6 @@
 {
   "cust_welcome_msg": "Un agent vous recevra bientôt.",
-  "agent_join_msg": "Vous discutez à présent avec {0}",
+  "agent_join_msg": "WELCOME_MESSAGE#{0}",
   "system_close_session": "Le système a fermé la discussion",
   "agent_left_session": "{0} a quitté la discussion",
   "agent_close_session": "{0} a terminé la discussion",

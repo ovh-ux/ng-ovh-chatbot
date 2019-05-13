@@ -18,6 +18,7 @@ class ChatbotCtrl {
     CHATBOT_SURVEY_STEPS,
     LivechatFactory,
     LivechatService,
+    LIVECHAT_MESSAGE_TYPES,
     LIVECHAT_CLOSED_REASONS,
     LIVECHAT_NOT_AGENT,
   ) {
@@ -33,6 +34,7 @@ class ChatbotCtrl {
     this.SURVEY_STEPS = CHATBOT_SURVEY_STEPS;
     this.LivechatFactory = LivechatFactory;
     this.LivechatService = LivechatService;
+    this.LIVECHAT_MESSAGE_TYPES = LIVECHAT_MESSAGE_TYPES;
     this.LIVECHAT_CLOSED_REASONS = LIVECHAT_CLOSED_REASONS;
     this.LIVECHAT_NOT_AGENT = LIVECHAT_NOT_AGENT;
   }
@@ -66,6 +68,7 @@ class ChatbotCtrl {
         this.countryCode,
         this.languageCode, this.livechatCallbacks({
           onConnectSuccess: this.onLivechatConnectionSuccess,
+          onWelcomeMessage: this.onLivechatWelcome,
           onAgentMessage: this.onLivechatAgentMessage,
           onSystemMessage: this.onLivechatSystemMessage,
           onHistory: this.onLivechatHistory,
@@ -100,6 +103,8 @@ class ChatbotCtrl {
     Object.entries(callbacks).forEach(([event, callback]) => {
       const boundCallback = callback.bind(this);
 
+      // Bind callbacks to instance and scope
+      // with original arguments
       boundCallbacks[event] = ((...args) => {
         this.$scope.$apply(() => {
           boundCallback(...args);
@@ -358,6 +363,18 @@ class ChatbotCtrl {
     });
   }
 
+  onLivechatConnectionSuccess() {
+    this.pushMessageToUI(this.botMessage('livechat_waiting'));
+  }
+
+  onLivechatWelcome(agentName) {
+    this.pushMessageToUI({
+      text: this.$translate.instant('livechat_welcome', { name: agentName }),
+      time: moment().format('LT'),
+      type: this.MESSAGE_TYPES.bot,
+    });
+  }
+
   endLivechat() {
     this.livechatFactory.end();
     this.livechat = false;
@@ -406,6 +423,11 @@ class ChatbotCtrl {
 
   onLivechatHistory(messages) {
     messages.forEach((msg) => {
+      if (msg.type === this.LIVECHAT_MESSAGE_TYPES.Welcome) {
+        this.onLivechatWelcome(msg.text);
+        return;
+      }
+
       this.pushMessageToUI({
         text: msg.text,
         time: msg.time.format('LT'),
@@ -441,10 +463,6 @@ class ChatbotCtrl {
 
   removeLivechatSurvey() {
     this.messages = filter(this.messages, msg => msg.type !== this.MESSAGE_TYPES.livechatsurvey);
-  }
-
-  onLivechatConnectionSuccess() {
-    this.pushMessageToUI(this.botMessage('livechat_waiting'));
   }
 
   onLivechatNoAgentsAvailable() {
