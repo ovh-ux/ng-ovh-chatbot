@@ -13,6 +13,7 @@ class ChatbotCtrl {
     $translate,
     ChatbotService,
     CHATBOT_CONFIG,
+    CHATBOT_MESSAGE_QUALITY,
     CHATBOT_MESSAGE_TYPES,
     CHATBOT_SURVEY_STEPS,
   ) {
@@ -24,6 +25,7 @@ class ChatbotCtrl {
     this.$translate = $translate;
     this.ChatbotService = ChatbotService;
     this.CONFIG = CHATBOT_CONFIG;
+    this.MESSAGE_QUALITY = CHATBOT_MESSAGE_QUALITY;
     this.MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
     this.SURVEY_STEPS = CHATBOT_SURVEY_STEPS;
   }
@@ -33,6 +35,7 @@ class ChatbotCtrl {
     this.hidden = true;
     this.messages = [];
     this.suggestions = [];
+    this.banner = null;
 
     this.loaders = {
       isStarting: false,
@@ -47,6 +50,28 @@ class ChatbotCtrl {
 
     this.$scope.$on('ovh-chatbot:open', () => this.open());
     this.$scope.$on('ovh-chatbot:opened', () => this.focusInput());
+
+    const config = this.config || {};
+    if (isString(this.url)) {
+      config.url = this.url;
+    }
+    this.ChatbotService.setConfig(config);
+  }
+
+  isInvisibleMessage(text) {
+    return this.qualifyMessage(text) === this.MESSAGE_QUALITY.invisible;
+  }
+
+  qualifyMessage(text) {
+    if (text.startsWith('##')) {
+      return this.MESSAGE_QUALITY.toplist;
+    }
+
+    if (text.startsWith('#')) {
+      return this.MESSAGE_QUALITY.invisible;
+    }
+
+    return this.MESSAGE_QUALITY.normal;
   }
 
   pushMessageToUI(message) {
@@ -58,6 +83,7 @@ class ChatbotCtrl {
       text: this.$translate.instant(translateId),
       time: moment().format('LT'),
       type: this.MESSAGE_TYPES.bot,
+      quality: this.MESSAGE_QUALITY.normal,
       ...params,
     };
   }
@@ -95,6 +121,7 @@ class ChatbotCtrl {
       text: messageText,
       time: moment().format('LT'),
       type: isPostback ? this.MESSAGE_TYPES.postback : this.MESSAGE_TYPES.user,
+      quality: this.qualifyMessage(messageText),
     });
 
     return this.ChatbotService
@@ -105,6 +132,7 @@ class ChatbotCtrl {
           ...botMessage,
           time: moment(botMessage.serverTime).format('LT'),
           type: this.MESSAGE_TYPES.bot,
+          quality: this.qualifyMessage(botMessage.text),
         });
         if (botMessage.askFeedback) {
           this.$timeout(() => {
@@ -119,10 +147,11 @@ class ChatbotCtrl {
   }
 
   welcome() {
-    return this.ChatbotService.topKnowledge(3)
-      .then(rewords => ([
-        this.botMessage('chatbot_welcome_message', { rewords }),
-      ]));
+    return this.ChatbotService.automaticMessage(this.config.universe, this.config.subsidiary)
+      .then(message => [
+        message,
+        this.botMessage('chatbot_welcome_message'),
+      ]);
   }
 
   survey() {
@@ -189,6 +218,11 @@ class ChatbotCtrl {
         this.enableScroll();
         this.enableAutocomplete();
 
+        return this.ChatbotService.informationBanner();
+      })
+      .then((banner) => {
+        this.banner = this.constructor.parseBanner(banner);
+
         const contextId = this.constructor.getContextId();
         this.loaders.isStarting = true;
 
@@ -202,7 +236,10 @@ class ChatbotCtrl {
         return messages;
       })
       .then((messages) => {
-        this.messages = messages;
+        this.messages = messages.map(message => ({
+          ...message,
+          quality: this.qualifyMessage(message.text),
+        }));
       })
       .finally(() => {
         this.loaders.isStarting = false;
@@ -265,6 +302,10 @@ class ChatbotCtrl {
     if (id) {
       localStorage.setItem('ovhChatbotContextId', id);
     }
+  }
+
+  static parseBanner(bannerMessage) {
+    return bannerMessage.text;
   }
 }
 

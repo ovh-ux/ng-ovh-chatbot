@@ -4,7 +4,7 @@ import translate from 'angular-translate';
 import '@ovh-ux/ng-translate-async-loader';
 
 import service from './service';
-import directive from './directive';
+import component from './component';
 import iconsTemplate from './templates/icons.html';
 
 import './index.less';
@@ -17,9 +17,14 @@ angular
     translate,
   ])
   .service('ChatbotService', service)
-  .directive('ovhChatbot', directive)
+  .component('ovhChatbot', component)
   .component('ovhChatbotIcons', { template: iconsTemplate })
   .run(/* @ngTranslationsInject:xml ./translations */)
+  .constant('CHATBOT_MESSAGE_QUALITY', {
+    normal: 'normal',
+    invisible: 'invisible',
+    toplist: 'toplist',
+  })
   .constant('CHATBOT_MESSAGE_TYPES', {
     bot: 'bot',
     user: 'user',

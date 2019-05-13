@@ -19,6 +19,12 @@ In your `index.html`:
 
 <!-- place it anywhere -->
 <ovh-chatbot></ovh-chatbot>
+
+<!-- you can specify a custom URL for the API (defaults to "/chatbot") -->
+<ovh-chatbot url="/url/to/the/chatbot/api"></ovh-chatbot>
+
+<!-- you can also provide additional configuration -->
+<ovh-chatbot config="{ 'space': 'Web', 'language': 'fr', 'subsidiary': 'BE' }"></ovh-chatbot>
 ```
 
 In your `app.js`:
@@ -31,29 +37,20 @@ angular
   .module('myApp', [
     ngOvhChatbot,
   ]);
-
-// By default, the chatbot hit the URL at "/chatbot".
-// If you want to use a custom url:
-
-angular
-  .module('myApp')
-  .config(/* @ngInject */(ChatbotService) => {
-    ChatbotService.setChatbotUrl('/url/to/the/chatbot');
-  });
 ```
+
+## Config fields
+
+| Key        | Value            | Default       | Description                                   |
+| ---------- | ---------------- | ------------- | --------------------------------------------- |
+| space      | Any string       | "Default/Web" | Provide the knowledge space for the bot       |
+| universe   | Any string       | "WEB"         | Provide the universe for the bot              |
+| language   | Two letters code | "fr"          | Provide the language for the bot              |
+| subsidiary | Two letters code | "FR"          | Provide the country for the bot               |
 
 ## Tips
 
 * The chatbot div is automatically placed in the bottom right of the page.
-
-### ovh-angular-user-pref:
-
-Key used: `CHATBOT_PREF`
-
-| property      | type | default | usage                          |
-|---------------|------|---------|--------------------------------|
-| enable        | bool | true    | is the chatbot enabled or not? |
-| notifications | bool | false   | will there be notifications?   |
 
 ## Test
 
