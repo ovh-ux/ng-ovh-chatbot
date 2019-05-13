@@ -6,5 +6,6 @@ export default () => ({
   restrict: 'E',
   controller,
   controllerAs: '$ctrl',
-  bindTocontroller: true,
+  bindToController: true,
+  scope: {},
 });

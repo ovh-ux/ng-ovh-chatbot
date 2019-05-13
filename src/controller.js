@@ -45,8 +45,8 @@ class ChatbotCtrl {
       showOpenButton: false,
     };
 
-    this.$scope.$on('ovh-chatbot:open', () => this.open());
-    this.$scope.$on('ovh-chatbot:opened', () => this.focusInput());
+    this.$rootScope.$on('ovh-chatbot:open', () => this.open());
+    this.$rootScope.$on('ovh-chatbot:opened', () => this.focusInput());
   }
 
   pushMessageToUI(message) {
