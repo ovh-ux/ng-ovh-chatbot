@@ -65,6 +65,7 @@ class ChatbotCtrl {
         countryConfig,
         this.countryCode,
         this.languageCode, this.livechatCallbacks({
+          onConnectSuccess: this.onLivechatConnectionSuccess,
           onAgentMessage: this.onLivechatAgentMessage,
           onSystemMessage: this.onLivechatSystemMessage,
           onHistory: this.onLivechatHistory,
@@ -339,7 +340,9 @@ class ChatbotCtrl {
   startLivechat(category, universe, product) {
     this.started = true;
     this.livechat = true;
-    this.livechatFactory.start(category, universe, product).catch((err) => {
+    this.livechatFactory.start(category, universe, product).then(() => {
+      this.pushMessageToUI(this.botMessage('livechat_transfer'));
+    }).catch((err) => {
       if (err && Object.values(this.LIVECHAT_CLOSED_REASONS).includes(err.closedReason)) {
         this.pushMessageToUI(this.botMessage(`livechat_closed_${err.closedReason}`));
         this.pushMessageToUI(this.botMessage('livechat_closed_create_a_ticket'));
@@ -438,6 +441,10 @@ class ChatbotCtrl {
 
   removeLivechatSurvey() {
     this.messages = filter(this.messages, msg => msg.type !== this.MESSAGE_TYPES.livechatsurvey);
+  }
+
+  onLivechatConnectionSuccess() {
+    this.pushMessageToUI(this.botMessage('livechat_waiting'));
   }
 
   onLivechatNoAgentsAvailable() {

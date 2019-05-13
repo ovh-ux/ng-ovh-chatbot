@@ -65,7 +65,7 @@ function LivechatFactory(
       this.eventHandlers = this.chat.GetEventHandlers();
       this.restoredSession = restoredSession;
 
-      this.initEventHandlers();
+      this.initEventHandlers(restoredSession);
 
       this.customer = new this.library.Datatype.CustomerObject();
 
@@ -267,7 +267,7 @@ function LivechatFactory(
         && moment(msg.timeStamp).isValid();
     }
 
-    initEventHandlers() {
+    initEventHandlers(restoredSession) {
       this.eventHandlers.OnConnectionInitialized = () => {
         if (this.restoredSession) {
           this.chat.Attach(
@@ -284,6 +284,12 @@ function LivechatFactory(
       this.eventHandlers.OnConnectSuccess = (successData) => {
         this.LivechatService.constructor.saveSessionId(successData.SessionID);
         this.setChatInProgress();
+
+        // If this is a new session, trigger connectSucces
+        // to display a waiting message
+        if (!restoredSession && isFunction(this.customHandlers.onConnectSuccess)) {
+          this.customHandlers.onConnectSuccess();
+        }
       };
 
       this.eventHandlers.OnConnectionAttached = () => {
