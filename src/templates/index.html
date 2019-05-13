@@ -178,7 +178,7 @@
                       autofocus="autofocus"
                       data-translate-attr="{placeholder:'chatbot_input_placeholder'}"
                       data-ng-model="$ctrl.message"
-                      data-ng-keyup="$event.keyCode == 13 && $ctrl.ask()">
+                      data-ng-keyup="$event.keyCode == 13 ? $ctrl.ask() : $ctrl.startTyping()">
             </textarea>
             <button type="submit"
                     data-translate-attr="{'aria-label':'chatbot_input_send'}"

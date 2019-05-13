@@ -1,4 +1,5 @@
 import 'egain-client-library';
+import debounce from 'lodash/debounce';
 import isFunction from 'lodash/isFunction';
 import reduce from 'lodash/reduce';
 import messaging from './libs/egain/messaging/translations';
@@ -47,6 +48,10 @@ function LivechatFactory(
           this.setChatEnded();
         }
       });
+
+      this.stopTypingDebounced = debounce(() => {
+        this.chat.SendCustomerStopTyping();
+      }, 3000);
     }
 
     start(category, universe, product, restoredSession = null) {
@@ -424,6 +429,11 @@ function LivechatFactory(
 
     sendMessageToAgent(message) {
       this.chat.SendMessageToAgent(message);
+    }
+
+    setCustomerIsTyping() {
+      this.chat.SendCustomerStartTyping();
+      this.stopTypingDebounced();
     }
 
     setChatInProgress() {

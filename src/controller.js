@@ -144,6 +144,12 @@ class ChatbotCtrl {
     }
   }
 
+  startTyping() {
+    if (this.livechat) {
+      this.livechatFactory.setCustomerIsTyping();
+    }
+  }
+
   postback(postbackMessage) {
     if (postbackMessage.action) {
       this.doAction(postbackMessage.action);
@@ -200,6 +206,7 @@ class ChatbotCtrl {
   }
 
   postChatMessage(messageText) {
+    this.livechatFactory.setCustomerIsTyping(false);
     this.livechatFactory.sendMessageToAgent(messageText);
     this.pushMessageToUI({
       text: messageText,
@@ -373,6 +380,7 @@ class ChatbotCtrl {
   }
 
   onLivechatAgentMessage(msg) {
+    this.onLivechatAgentStopTyping();
     this.pushMessageToUI({
       text: msg.Message,
       time: moment().format('LT'),
@@ -381,6 +389,7 @@ class ChatbotCtrl {
   }
 
   onLivechatSystemMessage(msg) {
+    this.onLivechatAgentStopTyping();
     this.pushMessageToUI({
       text: msg.Message,
       time: moment().format('LT'),
@@ -399,6 +408,7 @@ class ChatbotCtrl {
   }
 
   onLivechatSurvey(sessionId) {
+    this.onLivechatAgentStopTyping();
     this.pushMessageToUI({
       text: this.$translate.instant('livechat_survey'),
       time: moment().format('LT'),
@@ -481,6 +491,8 @@ class ChatbotCtrl {
         type: this.MESSAGE_TYPES.bot,
       });
     }
+
+    this.onLivechatAgentStopTyping();
   }
 
   suggest(message) {
