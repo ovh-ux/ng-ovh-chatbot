@@ -31,9 +31,9 @@
                         <use href="#chatbot-svg-avatar" />
                     </svg>
                 </div>
-                <div class="chatbot-time"
-                     data-ng-if="message.quality === $ctrl.MESSAGE_QUALITY.normal"
-                     data-ng-bind="message.time"></div>
+                <time class="chatbot-time"
+                      data-ng-if="message.quality === $ctrl.MESSAGE_QUALITY.normal"
+                      data-ng-bind="message.time"></time>
                 <div class="chatbot-text"
                      data-ng-if="message.quality === $ctrl.MESSAGE_QUALITY.normal">
                     <span data-ng-bind-html="message.text"></span>
