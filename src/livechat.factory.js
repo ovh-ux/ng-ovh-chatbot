@@ -18,7 +18,7 @@ function LivechatFactory(
   LIVECHAT_NOT_AGENT,
 ) {
   return class {
-    constructor(countryConfig, languageCode, countryCode, handlers) {
+    constructor(config, languageCode, countryCode, handlers) {
       this.$http = $http;
       this.$location = $location;
       this.$translate = $translate;
@@ -28,12 +28,11 @@ function LivechatFactory(
       this.LIVECHAT_MESSAGE_TYPES = LIVECHAT_MESSAGE_TYPES;
       this.LIVECHAT_NOT_AGENT = LIVECHAT_NOT_AGENT;
       this.LivechatService = LivechatService;
-      this.countryConfig = countryConfig;
       this.languageCode = languageCode;
       this.countryCode = countryCode;
 
       this.librarySettings = new EGainLibrarySettings();
-      this.librarySettings.CORSHost = this.countryConfig.host;
+      this.librarySettings.CORSHost = config.host;
       this.librarySettings.ChatPauseInSec = '30';
       this.librarySettings.IsDevelopmentModeOn = false;
       this.librarySettings.IsDebugOn = false;
@@ -57,9 +56,6 @@ function LivechatFactory(
     }
 
     start(category, universe, product, restoredSession = null) {
-      let queuePromise = $q.resolve();
-      let queue = null;
-
       this.library = new EGainLibrary(this.librarySettings);
       this.chat = new this.library.Chat();
       this.eventHandlers = this.chat.GetEventHandlers();
@@ -69,28 +65,32 @@ function LivechatFactory(
 
       this.customer = new this.library.Datatype.CustomerObject();
 
-      if (!restoredSession) {
-        // Get the queue name and opening hours
-        queuePromise = this.LivechatService.getQueue(category, universe).then((queueConfig) => {
-          if (!queueConfig) {
-            return $q.reject();
-          }
+      return this.LivechatService.getAuthentication().then((samlResponse) => {
+        if (!restoredSession) {
+          // Get the queue name and opening hours
+          return this.LivechatService.getQueue(
+            category,
+            universe,
+            !!samlResponse, // EntryPoint is different when using SSO
+          ).then((queueConfig) => {
+            if (!queueConfig) {
+              return $q.reject();
+            }
 
-          if (!queueConfig.isOpen || !queueConfig.name) {
-            return $q.reject(queueConfig);
-          }
+            if (!queueConfig.isOpen || !queueConfig.name || !queueConfig.entryPoint) {
+              return $q.reject(queueConfig);
+            }
 
-          queue = queueConfig.name;
-          return true;
-        });
-      }
+            // Save entryPoint for session restore
+            this.LivechatService.constructor.saveEntryPoint(queueConfig.entryPoint);
 
-      return queuePromise.then(
-        () => this.LivechatService.getAuthentication(),
-      ).then((samlResponse) => {
-        const entryPoint = samlResponse
-          ? this.countryConfig.entryPoints.sso
-          : this.countryConfig.entryPoints.default;
+            return [queueConfig.entryPoint, queueConfig.name, samlResponse];
+          });
+        }
+
+        // Retrieve the entryPoint to restore the session
+        return [this.LivechatService.constructor.getEntryPoint(), null, samlResponse];
+      }).then(([entryPoint, queue, samlResponse]) => {
         let availabilityPromise = $q.resolve();
 
         if (!restoredSession) {
@@ -139,6 +139,8 @@ function LivechatFactory(
     endConcurrentSession() {
       const deferred = $q.defer();
       const sessionId = this.LivechatService.constructor.getSessionId();
+      const entryPoint = this.LivechatService.constructor.getEntryPoint();
+      const lastRequestId = this.LivechatService.constructor.getLastRequestId();
 
       if (!sessionId || !this.LivechatService.constructor.isChatInProgress()) {
         deferred.resolve();
@@ -169,8 +171,8 @@ function LivechatFactory(
 
         this.eventHandlers.OnConnectionInitialized = () => {
           this.chat.Attach(
-            this.LivechatService.constructor.getSessionId(),
-            this.LivechatService.constructor.getLastRequestId(),
+            sessionId,
+            lastRequestId,
           );
         };
 
@@ -189,21 +191,16 @@ function LivechatFactory(
 
         this.customer = new this.library.Datatype.CustomerObject();
 
-        return this.LivechatService.getAuthentication().then((samlResponse) => {
-          const entryPoint = samlResponse
-            ? this.countryConfig.entryPoints.sso
-            : this.countryConfig.entryPoints.default;
+        this.chat.Initialize(
+          entryPoint,
+          this.languageCode,
+          this.countryCode,
+          this.eventHandlers,
+          'ovh',
+          'v11',
+        );
 
-          this.prepareCustomer(this.customer, samlResponse);
-          this.chat.Initialize(
-            entryPoint,
-            this.languageCode,
-            this.countryCode,
-            this.eventHandlers,
-            'ovh',
-            'v11',
-          );
-        });
+        return null;
       }).finally(() => {
         deferred.resolve();
       });

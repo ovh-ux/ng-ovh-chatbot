@@ -3,7 +3,7 @@
   "L10N_EXIT_TXT": "Merci pour votre visite.",
   "L10N_LINES_ARE_BUSY": "Aucun conseiller n'est disponible pour le moment. Nous vous prions d'accepter nos excuses pour la gêne occasionnée.",
   "L10N_NO_AGENTS_AVAILABLE": "Aucun conseiller n'est disponible pour le moment. Nous vous prions d'accepter nos excuses pour la gêne occasionnée.",
-  "L10N_SYSTEM_CANNOT_ASSIGN_AGENT": "Le système ne peut affecter aucun conseiller à la requête.",
+  "L10N_SYSTEM_CANNOT_ASSIGN_AGENT": "Aucun conseiller n'est disponible pour le moment. Nous vous prions d'accepter nos excuses pour la gêne occasionnée.",
   "L10N_MSG_CMB_FAILURE": "Oups... la connexion avec le conseiller a été interrompue.",
   "error_delay_time": "Saisissez un délai valide"
 }

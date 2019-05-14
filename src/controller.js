@@ -62,9 +62,9 @@ class ChatbotCtrl {
     this.$scope.$on('ovh-chatbot:open', () => this.open());
     this.$scope.$on('ovh-chatbot:opened', () => this.focusInput());
 
-    this.LivechatService.getCountryConfiguration(this.countryCode).then((countryConfig) => {
+    this.LivechatService.getConfiguration().then((config) => {
       this.livechatFactory = new this.LivechatFactory(
-        countryConfig,
+        config,
         this.countryCode,
         this.languageCode, this.livechatCallbacks({
           onConnectSuccess: this.onLivechatConnectionSuccess,
@@ -381,11 +381,11 @@ class ChatbotCtrl {
   }
 
   endConcurrentLivechat() {
-    this.LivechatService.getCountryConfiguration(this.countryCode).then((countryConfig) => {
+    this.LivechatService.getConfiguration().then((config) => {
       // Use a separate instance to prevent interferences
       // with the next session
       const killerFactory = new this.LivechatFactory(
-        countryConfig,
+        config,
         this.countryCode,
         this.languageCode,
       );

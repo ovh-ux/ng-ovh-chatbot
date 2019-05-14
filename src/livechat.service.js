@@ -6,21 +6,22 @@ class LivechatService {
     this.$q = $q;
   }
 
-  getCountryConfiguration(countryCode) {
+  getConfiguration() {
     return this.$http({
       method: 'GET',
-      url: `/engine/2api/chat/configuration/${countryCode}`,
+      url: '/engine/2api/chat/configuration',
     }).then(response => response && response.data)
       .catch(() => null);
   }
 
-  getQueue(universe, category) {
+  getQueue(universe, category, sso) {
     return this.$http({
       method: 'GET',
       url: '/engine/2api/chat/queue',
       params: {
         universe,
         category,
+        sso,
       },
     }).then(response => response && response.data);
   }
@@ -114,6 +115,16 @@ class LivechatService {
 
   static removeSessionId() {
     localStorage.removeItem('ovhLivechatId');
+  }
+
+  static getEntryPoint() {
+    return localStorage.getItem('ovhLivechatEntryPoint');
+  }
+
+  static saveEntryPoint(entryPoint) {
+    if (entryPoint) {
+      localStorage.setItem('ovhLivechatEntryPoint', entryPoint);
+    }
   }
 
   static getLastRequestId() {
