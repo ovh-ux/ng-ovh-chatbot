@@ -393,7 +393,7 @@ class ChatbotCtrl {
     this.pushMessageToUI({
       text: this.$translate.instant('livechat_welcome', { name: agentName }),
       time: moment().format('LT'),
-      type: this.MESSAGE_TYPES.bot,
+      type: this.MESSAGE_TYPES.agent,
     });
   }
 
