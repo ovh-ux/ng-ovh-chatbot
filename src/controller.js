@@ -43,11 +43,13 @@ class ChatbotCtrl {
     this.started = false;
     this.livechat = false;
     this.hidden = true;
+    this.done = false;
     this.messages = [];
     this.suggestions = [];
 
     this.loaders = {
       isStarting: false,
+      isStartingLivechat: false,
       isAsking: false,
       isGettingSuggestions: false,
       isSendingSurvey: false,
@@ -62,6 +64,7 @@ class ChatbotCtrl {
     this.$scope.$on('ovh-chatbot:open', () => this.open());
     this.$scope.$on('ovh-chatbot:opened', () => this.focusInput());
 
+    this.loaders.isStartingLivechat = true;
     this.LivechatService.getConfiguration().then((config) => {
       this.livechatFactory = new this.LivechatFactory(
         config,
@@ -81,7 +84,7 @@ class ChatbotCtrl {
         }),
       );
 
-      this.livechatFactory.restore().then((chatRestored) => {
+      return this.livechatFactory.restore().then((chatRestored) => {
         if (chatRestored) {
           this.started = true;
           this.livechat = true;
@@ -94,6 +97,8 @@ class ChatbotCtrl {
       });
     }).catch(() => {
       this.LivechatFactory = null;
+    }).finally(() => {
+      this.loaders.isStartingLivechat = false;
     });
   }
 
@@ -287,6 +292,8 @@ class ChatbotCtrl {
   }
 
   start() {
+    this.done = false;
+
     // Check livechat initialization
     if (!this.livechatFactory) {
       this.pushMessageToUI(this.botMessage('livechat_init_error'));
@@ -345,9 +352,12 @@ class ChatbotCtrl {
   startLivechat(category, universe, product) {
     this.started = true;
     this.livechat = true;
+    this.loaders.isStartingLivechat = true;
     this.livechatFactory.start(category, universe, product).then(() => {
       this.pushMessageToUI(this.botMessage('livechat_transfer'));
     }).catch((err) => {
+      this.done = true;
+
       if (err && Object.values(this.LIVECHAT_CLOSED_REASONS).includes(err.closedReason)) {
         this.pushMessageToUI(this.botMessage(`livechat_closed_${err.closedReason}`));
 
@@ -370,6 +380,8 @@ class ChatbotCtrl {
       }
 
       this.onLivechatConnectionFailure();
+    }).finally(() => {
+      this.loaders.isStartingLivechat = false;
     });
   }
 
@@ -386,7 +398,9 @@ class ChatbotCtrl {
   }
 
   endLivechat() {
-    this.livechatFactory.end();
+    if (this.livechatFactory) {
+      this.livechatFactory.end();
+    }
     this.livechat = false;
   }
 
@@ -447,6 +461,7 @@ class ChatbotCtrl {
   }
 
   onLivechatSurvey(sessionId) {
+    this.done = true;
     this.onLivechatAgentStopTyping();
     this.pushMessageToUI({
       text: this.$translate.instant('livechat_survey'),
@@ -477,11 +492,13 @@ class ChatbotCtrl {
 
   onLivechatNoAgentsAvailable() {
     this.livechat = false;
+    this.done = true;
     this.pushMessageToUI(this.botMessage('livechat_no_agents_available'));
   }
 
   onLivechatConnectionFailure() {
     this.livechat = false;
+    this.done = true;
     this.pushMessageToUI(this.botMessage('livechat_connection_failure'));
   }
 

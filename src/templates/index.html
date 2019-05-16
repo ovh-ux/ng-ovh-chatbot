@@ -196,11 +196,12 @@
                       autofocus="autofocus"
                       data-translate-attr="{placeholder:'chatbot_input_placeholder'}"
                       data-ng-model="$ctrl.message"
-                      data-ng-keyup="$event.keyCode == 13 ? $ctrl.ask() : $ctrl.startTyping()">
+                      data-ng-keyup="$event.keyCode == 13 ? $ctrl.ask() : $ctrl.startTyping()"
+                      data-ng-disabled="$ctrl.done || $ctrl.loaders.isStartingLivechat">
             </textarea>
             <button type="submit"
                     data-translate-attr="{'aria-label':'chatbot_input_send'}"
-                    data-ng-disabled="!$ctrl.message.length">
+                    data-ng-disabled="!$ctrl.message.length || $ctrl.done || $ctrl.loaders.isStartingLivechat">
                 <svg viewbox="0 0 24 24" data-ng-if="!$ctrl.message.length"
                      aria-hidden="true">
                     <use href="#chatbot-svg-disabled-paperplane" />

@@ -143,6 +143,11 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
           resize: none;
           outline: none;
           width: 100%;
+
+          &:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+          }
         }
 
         button { /* stylelint-disable-line no-descending-specificity */
