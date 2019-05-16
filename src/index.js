@@ -30,7 +30,8 @@ angular
     bot: 'bot',
     postback: 'postback',
     survey: 'survey',
-    livechatsurvey: 'livechatsurvey',
+    livechatSurvey: 'livechatSurvey',
+    livechatCalendar: 'livechatCalendar',
   })
   .constant('CHATBOT_SURVEY_STEPS', {
     ask: 'ask',

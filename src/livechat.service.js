@@ -1,3 +1,5 @@
+import reduce from 'lodash/reduce';
+
 class LivechatService {
   /* @ngInject */
   constructor($http, $location, $q) {
@@ -23,7 +25,45 @@ class LivechatService {
         category,
         sso,
       },
-    }).then(response => response && response.data);
+    }).then((response) => {
+      const queueConfig = response && response.data;
+
+      if (queueConfig && queueConfig.calendar) {
+        queueConfig.calendar = this.constructor.formatCalendar(queueConfig.calendar);
+      }
+
+      return queueConfig;
+    });
+  }
+
+  // Format Calendar to local hours
+  static formatCalendar(calendar) {
+    // Calendar is keyed by english day name
+    // and has a list of open slots
+    return reduce(calendar, (res, slots, day) => {
+      // Ignore null slots days
+      if (slots) {
+        res.push({
+          name: day,
+          slots: this.formatCalendarDay(slots),
+        });
+      }
+
+      return res;
+    }, []);
+  }
+
+  static formatCalendarDay(slots) {
+    return slots.map(slot => this.formatCalendarSlot(slot));
+  }
+
+  static formatCalendarSlot(slot) {
+    const today = moment().format('YYYY-MM-DD');
+    // Format to local time
+    return {
+      startTime: moment(`${today}T${slot.startTime}`).format('LT'),
+      endTime: moment(`${today}T${slot.endTime}`).format('LT'),
+    };
   }
 
   getAuthentication() {

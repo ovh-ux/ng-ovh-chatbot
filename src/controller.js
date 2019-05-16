@@ -350,6 +350,16 @@ class ChatbotCtrl {
     }).catch((err) => {
       if (err && Object.values(this.LIVECHAT_CLOSED_REASONS).includes(err.closedReason)) {
         this.pushMessageToUI(this.botMessage(`livechat_closed_${err.closedReason}`));
+
+        if (err.calendar) {
+          this.pushMessageToUI({
+            text: this.$translate.instant('livechat_calendar'),
+            time: moment().format('LT'),
+            type: this.MESSAGE_TYPES.livechatCalendar,
+            calendar: err.calendar,
+          });
+        }
+
         this.pushMessageToUI(this.botMessage('livechat_closed_create_a_ticket'));
         return;
       }
@@ -442,7 +452,7 @@ class ChatbotCtrl {
       text: this.$translate.instant('livechat_survey'),
       time: moment().format('LT'),
       sessionId,
-      type: this.MESSAGE_TYPES.livechatsurvey,
+      type: this.MESSAGE_TYPES.livechatSurvey,
     });
   }
 
@@ -462,7 +472,7 @@ class ChatbotCtrl {
   }
 
   removeLivechatSurvey() {
-    this.messages = filter(this.messages, msg => msg.type !== this.MESSAGE_TYPES.livechatsurvey);
+    this.messages = filter(this.messages, msg => msg.type !== this.MESSAGE_TYPES.livechatSurvey);
   }
 
   onLivechatNoAgentsAvailable() {

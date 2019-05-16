@@ -44,6 +44,7 @@
                             </a>
                         </li>
                     </ul>
+
                     <div class="chatbot-survey"
                          data-ng-if="message.type === $ctrl.MESSAGE_TYPES.survey">
                         <div data-ng-if="message.survey.step === $ctrl.SURVEY_STEPS.ask">
@@ -77,8 +78,25 @@
                         </form>
                     </div>
 
+                    <table class="chatbot-chat-calendar"
+                           data-ng-if="message.type === $ctrl.MESSAGE_TYPES.livechatCalendar">
+                        <tr data-ng-repeat="day in message.calendar track by day.name">
+                            <td data-translate="{{'livechat_calendar_day_' + day.name}}"></td>
+                            <td data-ng-if="day.slots.length > 0"
+                                class="chatbot-chat-calendar-slots">
+                                <div data-ng-repeat="slot in day.slots track by $index">
+                                    {{slot.startTime}} - {{slot.endTime}}
+                                </div>
+                            </td>
+                            <td data-ng-if="day.slots.length === 0"
+                                class="chatbot-chat-calendar-slots">
+                                <span data-translate="livechat_calendar_closed_day"></span>
+                            </td>
+                        </tr>
+                    </table>
+
                     <div class="chatbot-chat-survey"
-                         data-ng-if="message.type === $ctrl.MESSAGE_TYPES.livechatsurvey">
+                         data-ng-if="message.type === $ctrl.MESSAGE_TYPES.livechatSurvey">
                         <form class="chatbot-chat-survey-form" name="chatSurveyForm">
                             <p data-translate="livechat_survey_question1"></p>
                             <label>
