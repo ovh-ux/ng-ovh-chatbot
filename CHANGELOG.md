@@ -1,3 +1,12 @@
+## [2.0.1](https://github.com/ovh-ux/ng-ovh-chatbot/compare/v2.0.0...v2.0.1) (2019-05-13)
+
+
+### Bug Fixes
+
+* isolate directive scope ([8077210](https://github.com/ovh-ux/ng-ovh-chatbot/commit/8077210))
+
+
+
 # [2.0.0](https://github.com/ovh-ux/ng-ovh-chatbot/compare/v2.0.0-beta.0...v2.0.0) (2019-04-17)
 
 

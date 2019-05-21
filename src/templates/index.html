@@ -12,29 +12,39 @@
         <h1 data-translate="chatbot_title"></h1>
     </div>
     <div class="chatbot-body">
+        <div class="chatbot-banner" data-ng-bind-html="$ctrl.banner"></div>
         <div class="chatbot-loader" data-ng-if="$ctrl.loaders.isStarting">
             <oui-spinner data-size="m"></oui-spinner>
         </div>
         <div class="chatbot-messages">
             <div class="chatbot-message"
                  data-ng-repeat="message in $ctrl.messages track by $index"
-                 data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.postback"
+                 data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.postback
+                             && message.quality !== $ctrl.MESSAGE_QUALITY.invisible"
                  data-ng-class="{'chatbot-message-user': message.type === $ctrl.MESSAGE_TYPES.user,
                                  'chatbot-message-agent': message.type === $ctrl.MESSAGE_TYPES.agent,
                                  'chatbot-message-bot': message.type !== $ctrl.MESSAGE_TYPES.user
-                                                        && message.type !== $ctrl.MESSAGE_TYPES.agent}">
-                <div class="chatbot-avatar" data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.user && message.type !== $ctrl.MESSAGE_TYPES.agent">
+                                                        && message.type !== $ctrl.MESSAGE_TYPES.agent,
+                                 'chatbot-message-toplist': message.quality === $ctrl.MESSAGE_QUALITY.toplist}">
+                <div class="chatbot-avatar"
+                     data-ng-if="message.type !== $ctrl.MESSAGE_TYPES.user
+                                 && message.type !== $ctrl.MESSAGE_TYPES.agent
+                                 && message.quality === $ctrl.MESSAGE_QUALITY.normal">
                     <svg viewbox="0 0 32 32">
                         <use href="#chatbot-svg-avatar" />
                     </svg>
                 </div>
-                <div class="chatbot-avatar" data-ng-if="message.type === $ctrl.MESSAGE_TYPES.agent">
+                <div class="chatbot-avatar"
+                     data-ng-if="message.type === $ctrl.MESSAGE_TYPES.agent">
                     <svg viewbox="0 0 32 32">
                         <use href="#chatbot-svg-assistant" />
                     </svg>
                 </div>
-                <div class="chatbot-time" data-ng-bind="message.time"></div>
-                <div class="chatbot-text">
+                <time class="chatbot-time"
+                      data-ng-if="message.quality === $ctrl.MESSAGE_QUALITY.normal"
+                      data-ng-bind="message.time"></time>
+                <div class="chatbot-text"
+                     data-ng-if="message.quality === $ctrl.MESSAGE_QUALITY.normal">
                     <span data-ng-bind-html="message.text"></span>
                     <ul data-ng-if="message.rewords.length">
                         <li data-ng-repeat="reword in message.rewords track by $index">
@@ -175,6 +185,17 @@
                         </form>
                     </div>
                 </div>
+                <div class="chatbot-toplist"
+                     data-ng-if="message.quality === $ctrl.MESSAGE_QUALITY.toplist">
+                    <ol data-ng-if="message.rewords.length">
+                        <li data-ng-repeat="reword in message.rewords track by $index">
+                            <a href="#"
+                               data-ng-click="$event.preventDefault();$ctrl.postback(reword);"
+                               data-ng-bind="reword.text">
+                            </a>
+                        </li>
+                    </ol>
+                </div>
             </div>
             <div data-ng-if="$ctrl.loaders.isAgentTyping">
                 ...
@@ -185,7 +206,8 @@
         <div class="chatbot-suggestions" data-ng-if="$ctrl.suggestions.length > 0 && $ctrl.message.length > 3">
             <div class="chatbot-suggestion-title" data-translate="chatbot_suggestion_text"></div>
             <ul>
-                <li data-ng-repeat="suggestion in $ctrl.suggestions track by $index">
+                <li data-ng-repeat="suggestion in $ctrl.suggestions track by $index"
+                    data-ng-if="!$ctrl.isInvisibleMessage(suggestion)">
                     <button data-ng-bind="suggestion" data-ng-click="$ctrl.ask(suggestion)"></button>
                 </li>
             </ul>
@@ -197,11 +219,11 @@
                       data-translate-attr="{placeholder:'chatbot_input_placeholder'}"
                       data-ng-model="$ctrl.message"
                       data-ng-keyup="$event.keyCode == 13 ? $ctrl.ask() : $ctrl.startTyping()"
-                      data-ng-disabled="$ctrl.done || $ctrl.loaders.isStartingLivechat">
+                      data-ng-disabled="$ctrl.loaders.isLivechatDone || $ctrl.loaders.isStartingLivechat">
             </textarea>
             <button type="submit"
                     data-translate-attr="{'aria-label':'chatbot_input_send'}"
-                    data-ng-disabled="!$ctrl.message.length || $ctrl.done || $ctrl.loaders.isStartingLivechat">
+                    data-ng-disabled="!$ctrl.message.length || $ctrl.loaders.isLivechatDone || $ctrl.loaders.isStartingLivechat">
                 <svg viewbox="0 0 24 24" data-ng-if="!$ctrl.message.length"
                      aria-hidden="true">
                     <use href="#chatbot-svg-disabled-paperplane" />

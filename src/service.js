@@ -8,14 +8,23 @@ class ChatbotService {
     this.CHATBOT_MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
     this.CHATBOT_API_ACTIONS = CHATBOT_API_ACTIONS;
 
-    this.chatbotUrl = '/chatbot';
+    this.defaultConfig = {
+      url: '/chatbot',
+      space: 'Default/Web',
+      universe: 'WEB',
+      language: 'fr',
+      subsidiary: 'FR',
+    };
+
+    this.config = { ...this.defaultConfig };
   }
 
   talk(userInput, contextId, extraParameters = {}) {
     return this.post({
       action: this.CHATBOT_API_ACTIONS.talk,
       contextId: contextId || '',
-      language: 'fr',
+      language: this.config.language || this.defaultConfig.language,
+      space: this.config.space || this.defaultConfig.space,
       userInput,
       extraParameters,
     }).then(({ data }) => data);
@@ -46,10 +55,19 @@ class ChatbotService {
       ));
   }
 
+  informationBanner() {
+    return this.talk('#bandeau d\'information');
+  }
+
+  automaticMessage(universe, subsidiary) {
+    return this.talk(`#universe:${universe || this.defaultConfig.universe};subsidiary:${subsidiary || this.defaultConfig.subsidiary}`);
+  }
+
   topKnowledge(maxKnowledge) {
     return this.get({
       action: this.CHATBOT_API_ACTIONS.topKnowledge,
       maxKnowledge,
+      space: this.config.space || this.defaultConfig.space,
     }).then(({ data }) => get(data, 'knowledgeArticles', []))
       .then(knowledgeArticles => knowledgeArticles.map(article => ({
         text: article.reword,
@@ -61,6 +79,7 @@ class ChatbotService {
     return this.post({
       action: this.CHATBOT_API_ACTIONS.suggestions,
       userInput,
+      space: this.config.space || this.defaultConfig.space,
     }).then(({ data }) => data);
   }
 
@@ -73,18 +92,21 @@ class ChatbotService {
     }).then(({ data }) => data);
   }
 
-  setChatbotUrl(url) {
-    this.chatbotUrl = url;
+  setConfig(config) {
+    this.config = {
+      ...this.defaultConfig,
+      ...config,
+    };
   }
 
-  getChatbotUrl() {
-    return this.chatbotUrl;
+  getConfig() {
+    return this.config;
   }
 
   get(params) {
     return this.$http({
       method: 'GET',
-      url: this.chatbotUrl,
+      url: this.config.url || this.defaultConfig.url,
       params: params || { contextId: '' },
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
@@ -97,7 +119,7 @@ class ChatbotService {
   post(inputData) {
     return this.$http({
       method: 'POST',
-      url: this.chatbotUrl,
+      url: this.config.url || this.defaultConfig.url,
       data: inputData,
       headers: {
         'Content-Type': 'application/json;charset=utf-8',
