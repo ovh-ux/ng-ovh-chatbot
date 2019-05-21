@@ -12,10 +12,10 @@
         <h1 data-translate="chatbot_title"></h1>
     </div>
     <div class="chatbot-body">
+        <div class="chatbot-banner" data-ng-bind-html="$ctrl.banner"></div>
         <div class="chatbot-loader" data-ng-if="$ctrl.loaders.isStarting">
             <oui-spinner data-size="m"></oui-spinner>
         </div>
-        <div class="chatbot-banner" data-ng-bind-html="$ctrl.banner"></div>
         <div class="chatbot-messages">
             <div class="chatbot-message"
                  data-ng-repeat="message in $ctrl.messages track by $index"

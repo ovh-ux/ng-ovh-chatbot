@@ -51,11 +51,11 @@ class ChatbotCtrl {
     this.$rootScope.$on('ovh-chatbot:open', () => this.open());
     this.$rootScope.$on('ovh-chatbot:opened', () => this.focusInput());
 
-    const config = this.config || {};
+    this.config = this.config || {};
     if (isString(this.url)) {
-      config.url = this.url;
+      this.config.url = this.url;
     }
-    this.ChatbotService.setConfig(config);
+    this.ChatbotService.setConfig(this.config);
   }
 
   isInvisibleMessage(text) {
@@ -147,6 +147,7 @@ class ChatbotCtrl {
   }
 
   welcome() {
+    console.log(this.config);
     return this.ChatbotService.automaticMessage(this.config.universe, this.config.subsidiary)
       .then(message => [
         message,

@@ -60,7 +60,7 @@ class ChatbotService {
   }
 
   automaticMessage(universe, subsidiary) {
-    return this.talk(`#universe:${universe};subsidiary:${subsidiary}`);
+    return this.talk(`#universe:${universe || this.defaultConfig.universe};subsidiary:${subsidiary || this.defaultConfig.subsidiary}`);
   }
 
   topKnowledge(maxKnowledge) {
