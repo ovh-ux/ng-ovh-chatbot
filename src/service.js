@@ -1,12 +1,12 @@
 import get from 'lodash/get';
 
+import { CHATBOT_API_ACTIONS, CHATBOT_MESSAGE_TYPES } from './constants';
+
 class ChatbotService {
   /* @ngInject */
-  constructor($http, $q, CHATBOT_API_ACTIONS, CHATBOT_MESSAGE_TYPES) {
+  constructor($http, $q) {
     this.$http = $http;
     this.$q = $q;
-    this.CHATBOT_MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
-    this.CHATBOT_API_ACTIONS = CHATBOT_API_ACTIONS;
 
     this.defaultConfig = {
       url: '/chatbot',
@@ -21,7 +21,7 @@ class ChatbotService {
 
   talk(userInput, contextId, extraParameters = {}) {
     return this.post({
-      action: this.CHATBOT_API_ACTIONS.talk,
+      action: CHATBOT_API_ACTIONS.talk,
       contextId: contextId || '',
       language: this.config.language || this.defaultConfig.language,
       space: this.config.space || this.defaultConfig.space,
@@ -32,7 +32,7 @@ class ChatbotService {
 
   history(contextId) {
     return this.get({
-      action: this.CHATBOT_API_ACTIONS.history,
+      action: CHATBOT_API_ACTIONS.history,
       contextId,
     }).then(({ data }) => data)
       .then(({ interactions }) => interactions.reduce(
@@ -41,13 +41,13 @@ class ChatbotService {
           messages.push({
             text: interaction.user,
             time: date.format('LT'),
-            type: this.CHATBOT_MESSAGE_TYPES.user,
+            type: CHATBOT_MESSAGE_TYPES.user,
           });
           messages.push({
             text: interaction.text,
             rewords: interaction.rewords,
             time: date.format('LT'),
-            type: this.CHATBOT_MESSAGE_TYPES.bot,
+            type: CHATBOT_MESSAGE_TYPES.bot,
           });
           return messages;
         },
@@ -60,12 +60,12 @@ class ChatbotService {
   }
 
   automaticMessage(universe, subsidiary) {
-    return this.talk(`#universe:${universe};subsidiary:${subsidiary}`);
+    return this.talk(`#universe:${universe || this.defaultConfig.universe};subsidiary:${subsidiary || this.defaultConfig.subsidiary}`);
   }
 
   topKnowledge(maxKnowledge) {
     return this.get({
-      action: this.CHATBOT_API_ACTIONS.topKnowledge,
+      action: CHATBOT_API_ACTIONS.topKnowledge,
       maxKnowledge,
       space: this.config.space || this.defaultConfig.space,
     }).then(({ data }) => get(data, 'knowledgeArticles', []))
@@ -77,7 +77,7 @@ class ChatbotService {
 
   suggestions(userInput) {
     return this.post({
-      action: this.CHATBOT_API_ACTIONS.suggestions,
+      action: CHATBOT_API_ACTIONS.suggestions,
       userInput,
       space: this.config.space || this.defaultConfig.space,
     }).then(({ data }) => data);
@@ -85,7 +85,7 @@ class ChatbotService {
 
   feedback(contextId, userInput, reason) {
     return this.post({
-      action: this.CHATBOT_API_ACTIONS.feedback,
+      action: CHATBOT_API_ACTIONS.feedback,
       contextId,
       userInput,
       reason,

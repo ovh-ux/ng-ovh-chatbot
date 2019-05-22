@@ -92,10 +92,10 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
         margin: @chatbot-form-margin;
         margin-bottom: -50px;
         padding: 0 10px;
-        background-color: #fff;
-        border: 1px solid rgba(187, 189, 191, 1);
+        background-color: @chatbot-suggestion-bg;
+        border: @chatbot-suggestion-border 1px solid;
         border-radius: 12px 12px 0 0;
-        color: rgba(89, 105, 125, 1);
+        color: @chatbot-suggestion-color;
 
         .chatbot-suggestion-title {
           text-align: center;
@@ -174,9 +174,9 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
         }
 
         .ovh-incident {
-          color: #8a5300;
-          border: 1px solid #e3cd4d;
-          background-color: #faefa0;
+          color: @chatbot-incident-color;
+          border: @chatbot-incident-border 1px solid;
+          background-color: @chatbot-incident-bg;
         }
       }
 
@@ -233,12 +233,12 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
 
             li::before {
               content: '';
-              background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCI+PGNpcmNsZSBzdHlsZT0iZmlsbDpub25lO3N0cm9rZTojZmY2NDZjO3N0cm9rZS13aWR0aDozOyIgY3g9IjMyIiBjeT0iMzIiIHI9IjMwLjUiIC8+PHBhdGggc3R5bGU9ImZpbGw6bm9uZTtzdHJva2U6IzAwYTJiZjtzdHJva2Utd2lkdGg6NDtzdHJva2UtbGluZWNhcDpyb3VuZDtzdHJva2UtbGluZWpvaW46cm91bmQ7IiBkPSJtIDI4LjEzMDY0LDI0LjM3MjIyMSA3Ljc1ODU0LDcuNzU4NTQgLTcuNDk3MDEsNy40OTcwMSIvPjwvc3ZnPgo=');
+              background-image: inline-svg('./img/toplist-icon.svg');
               background-position: center;
               background-repeat: no-repeat;
-              background-size: 35px;
-              width: 35px;
-              height: 35px;
+              background-size: @chatbot-toplist-icon-size;
+              width: @chatbot-toplist-icon-size;
+              height: @chatbot-toplist-icon-size;
               display: block;
               flex-shrink: 0;
               margin-right: 10px;
@@ -255,9 +255,9 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            background-color: #dbedf2;
-            border: #59d2ef solid 1px;
-            color: #204066;
+            background-color: @chatbot-feedback-default-bg;
+            border: @chatbot-feedback-default-border solid 1px;
+            color: @chatbot-feedback-default-color;
 
             svg { /* stylelint-disable-line no-descending-specificity */
               flex: 1;
@@ -272,15 +272,15 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
           }
 
           .chatbot-feedback-yes {
-            background-color: #e0eac2;
-            border: #b0ca67 solid 1px;
-            color: #4b6600;
+            background-color: @chatbot-feedback-yes-bg;
+            border: @chatbot-feedback-yes-border solid 1px;
+            color: @chatbot-feedback-yes-color;
           }
 
           .chatbot-feedback-no {
-            background-color: #f5e0da;
-            border: #b35940 solid 1px;
-            color: #b04020;
+            background-color: @chatbot-feedback-no-bg;
+            border: @chatbot-feedback-no-border solid 1px;
+            color: @chatbot-feedback-no-color;
           }
 
           textarea {

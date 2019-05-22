@@ -19,31 +19,6 @@ angular
   .service('ChatbotService', service)
   .component('ovhChatbot', component)
   .component('ovhChatbotIcons', { template: iconsTemplate })
-  .run(/* @ngTranslationsInject:xml ./translations */)
-  .constant('CHATBOT_MESSAGE_QUALITY', {
-    normal: 'normal',
-    invisible: 'invisible',
-    toplist: 'toplist',
-  })
-  .constant('CHATBOT_MESSAGE_TYPES', {
-    bot: 'bot',
-    user: 'user',
-    postback: 'postback',
-    survey: 'survey',
-  })
-  .constant('CHATBOT_SURVEY_STEPS', {
-    ask: 'ask',
-    details: 'details',
-  })
-  .constant('CHATBOT_API_ACTIONS', {
-    talk: 'talk',
-    history: 'history',
-    feedback: 'feedback',
-    suggestions: 'suggestions',
-    topKnowledge: 'topKnowledge',
-  })
-  .constant('CHATBOT_CONFIG', {
-    secondsBeforeSurvey: 3000,
-  });
+  .run(/* @ngTranslationsInject:xml ./translations */);
 
 export default moduleName;
