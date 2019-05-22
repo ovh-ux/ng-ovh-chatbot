@@ -5,29 +5,23 @@ import reduce from 'lodash/reduce';
 import messaging from './libs/egain/messaging/translations';
 import customChat from './libs/egain/customChat/translations';
 
-/* @ngInject */
-function LivechatFactory(
-  $http,
-  $location,
-  $q,
-  $translate,
-  $window,
-  LivechatService,
-  CHATBOT_MESSAGE_TYPES,
+import {
   LIVECHAT_MESSAGE_TYPES,
   LIVECHAT_NOT_AGENT,
+} from './constants';
+
+/* @ngInject */
+function LivechatFactory(
+  $q,
+  $window,
+  LivechatService,
 ) {
   return class {
     constructor(config, languageCode, countryCode, handlers) {
-      this.$http = $http;
-      this.$location = $location;
-      this.$translate = $translate;
       this.$q = $q;
       this.$window = $window;
-      this.CHATBOT_MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
-      this.LIVECHAT_MESSAGE_TYPES = LIVECHAT_MESSAGE_TYPES;
-      this.LIVECHAT_NOT_AGENT = LIVECHAT_NOT_AGENT;
       this.LivechatService = LivechatService;
+
       this.languageCode = languageCode;
       this.countryCode = countryCode;
 
@@ -116,7 +110,7 @@ function LivechatFactory(
           );
 
           return true;
-        }).catch(() => $q.reject(this.LIVECHAT_NOT_AGENT));
+        }).catch(() => $q.reject(LIVECHAT_NOT_AGENT));
       }).catch((err) => {
         this.setChatEnded();
         return $q.reject(err);

@@ -23,46 +23,6 @@ angular
   .factory('LivechatFactory', livechatFactory)
   .component('ovhChatbot', component)
   .component('ovhChatbotIcons', { template: iconsTemplate })
-  .run(/* @ngTranslationsInject:xml ./translations */)
-  .constant('CHATBOT_MESSAGE_QUALITY', {
-    normal: 'normal',
-    invisible: 'invisible',
-    toplist: 'toplist',
-  })
-  .constant('CHATBOT_MESSAGE_TYPES', {
-    user: 'user',
-    agent: 'agent',
-    bot: 'bot',
-    postback: 'postback',
-    survey: 'survey',
-    livechatSurvey: 'livechatSurvey',
-    livechatCalendar: 'livechatCalendar',
-  })
-  .constant('CHATBOT_SURVEY_STEPS', {
-    ask: 'ask',
-    details: 'details',
-  })
-  .constant('CHATBOT_API_ACTIONS', {
-    talk: 'talk',
-    history: 'history',
-    feedback: 'feedback',
-    suggestions: 'suggestions',
-    topKnowledge: 'topKnowledge',
-  })
-  .constant('CHATBOT_CONFIG', {
-    secondsBeforeSurvey: 3000,
-  })
-  .constant('LIVECHAT_MESSAGE_TYPES', {
-    Customer: 'user',
-    Agent: 'agent',
-    System: 'bot',
-    Welcome: 'welcome',
-  })
-  .constant('LIVECHAT_CLOSED_REASONS', {
-    outOfBusinessHours: 'out_of_business_hours',
-    closingDay: 'closing_day',
-    holiday: 'holiday',
-  })
-  .constant('LIVECHAT_NOT_AGENT', 'no_agent_available');
+  .run(/* @ngTranslationsInject:xml ./translations */);
 
 export default moduleName;

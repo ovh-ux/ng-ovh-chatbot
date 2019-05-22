@@ -3,6 +3,16 @@ import isString from 'lodash/isString';
 import remove from 'lodash/remove';
 import filter from 'lodash/filter';
 
+import {
+  CHATBOT_CONFIG,
+  CHATBOT_MESSAGE_QUALITY,
+  CHATBOT_MESSAGE_TYPES,
+  CHATBOT_SURVEY_STEPS,
+  LIVECHAT_CLOSED_REASONS,
+  LIVECHAT_MESSAGE_TYPES,
+  LIVECHAT_NOT_AGENT,
+} from './constants';
+
 class ChatbotCtrl {
   /* @ngInject */
   constructor(
@@ -13,15 +23,8 @@ class ChatbotCtrl {
     $timeout,
     $translate,
     ChatbotService,
-    CHATBOT_CONFIG,
-    CHATBOT_MESSAGE_QUALITY,
-    CHATBOT_MESSAGE_TYPES,
-    CHATBOT_SURVEY_STEPS,
     LivechatFactory,
     LivechatService,
-    LIVECHAT_MESSAGE_TYPES,
-    LIVECHAT_CLOSED_REASONS,
-    LIVECHAT_NOT_AGENT,
   ) {
     this.$element = $element;
     this.$q = $q;
@@ -30,15 +33,8 @@ class ChatbotCtrl {
     this.$timeout = $timeout;
     this.$translate = $translate;
     this.ChatbotService = ChatbotService;
-    this.CONFIG = CHATBOT_CONFIG;
-    this.MESSAGE_QUALITY = CHATBOT_MESSAGE_QUALITY;
-    this.MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
-    this.SURVEY_STEPS = CHATBOT_SURVEY_STEPS;
     this.LivechatFactory = LivechatFactory;
     this.LivechatService = LivechatService;
-    this.LIVECHAT_MESSAGE_TYPES = LIVECHAT_MESSAGE_TYPES;
-    this.LIVECHAT_CLOSED_REASONS = LIVECHAT_CLOSED_REASONS;
-    this.LIVECHAT_NOT_AGENT = LIVECHAT_NOT_AGENT;
   }
 
   $onInit() {
@@ -63,6 +59,10 @@ class ChatbotCtrl {
       isEnabled: true,
       showOpenButton: false,
     };
+
+    this.$scope.CHATBOT_MESSAGE_QUALITY = CHATBOT_MESSAGE_QUALITY;
+    this.$scope.CHATBOT_MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
+    this.$scope.CHATBOT_SURVEY_STEPS = CHATBOT_SURVEY_STEPS;
 
     this.$rootScope.$on('ovh-chatbot:open', () => this.open());
     this.$rootScope.$on('ovh-chatbot:opened', () => this.focusInput());
@@ -129,20 +129,20 @@ class ChatbotCtrl {
     return boundCallbacks;
   }
 
-  isInvisibleMessage(text) {
-    return this.qualifyMessage(text) === this.MESSAGE_QUALITY.invisible;
+  static isInvisibleMessage(text) {
+    return ChatbotCtrl.qualifyMessage(text) === CHATBOT_MESSAGE_QUALITY.invisible;
   }
 
-  qualifyMessage(text) {
+  static qualifyMessage(text) {
     if (text.startsWith('##')) {
-      return this.MESSAGE_QUALITY.toplist;
+      return CHATBOT_MESSAGE_QUALITY.toplist;
     }
 
     if (text.startsWith('#')) {
-      return this.MESSAGE_QUALITY.invisible;
+      return CHATBOT_MESSAGE_QUALITY.invisible;
     }
 
-    return this.MESSAGE_QUALITY.normal;
+    return CHATBOT_MESSAGE_QUALITY.normal;
   }
 
   pushMessageToUI(message) {
@@ -153,8 +153,8 @@ class ChatbotCtrl {
     return {
       text: this.$translate.instant(translateId),
       time: moment().format('LT'),
-      type: this.MESSAGE_TYPES.bot,
-      quality: this.MESSAGE_QUALITY.normal,
+      type: CHATBOT_MESSAGE_TYPES.bot,
+      quality: CHATBOT_MESSAGE_QUALITY.normal,
       ...params,
     };
   }
@@ -220,8 +220,8 @@ class ChatbotCtrl {
     this.pushMessageToUI({
       text: messageText,
       time: moment().format('LT'),
-      type: isPostback ? this.MESSAGE_TYPES.postback : this.MESSAGE_TYPES.user,
-      quality: this.qualifyMessage(messageText),
+      type: isPostback ? CHATBOT_MESSAGE_TYPES.postback : CHATBOT_MESSAGE_TYPES.user,
+      quality: ChatbotCtrl.qualifyMessage(messageText),
     });
 
     return this.ChatbotService
@@ -231,14 +231,14 @@ class ChatbotCtrl {
         this.pushMessageToUI({
           ...botMessage,
           time: moment(botMessage.serverTime).format('LT'),
-          type: this.MESSAGE_TYPES.bot,
-          quality: this.qualifyMessage(botMessage.text),
+          type: CHATBOT_MESSAGE_TYPES.bot,
+          quality: ChatbotCtrl.qualifyMessage(botMessage.text),
         });
         if (botMessage.askFeedback) {
           this.$timeout(() => {
             this.removeSurvey();
             this.pushMessageToUI(this.survey());
-          }, this.CONFIG.secondsBeforeSurvey);
+          }, CHATBOT_CONFIG.secondsBeforeSurvey);
         }
         if (botMessage.startLivechat) {
           this.enableLivechat();
@@ -266,16 +266,16 @@ class ChatbotCtrl {
 
   survey() {
     return this.botMessage('chatbot_survey_message', {
-      type: this.MESSAGE_TYPES.survey,
+      type: CHATBOT_MESSAGE_TYPES.survey,
       survey: {
-        step: this.SURVEY_STEPS.ask,
+        step: CHATBOT_SURVEY_STEPS.ask,
         details: null,
       },
     });
   }
 
   surveyNextStep(message) { /* eslint-disable no-param-reassign */
-    message.survey.step = this.SURVEY_STEPS.details;
+    message.survey.step = CHATBOT_SURVEY_STEPS.details;
     message.text = this.$translate.instant('chatbot_survey_message_details');
   }
 
@@ -291,7 +291,7 @@ class ChatbotCtrl {
   }
 
   removeSurvey() {
-    remove(this.messages, message => message.type === this.MESSAGE_TYPES.survey);
+    remove(this.messages, message => message.type === CHATBOT_MESSAGE_TYPES.survey);
   }
 
   close() {
@@ -353,7 +353,7 @@ class ChatbotCtrl {
       .then((messages) => {
         this.messages = messages.map(message => ({
           ...message,
-          quality: this.qualifyMessage(message.text),
+          quality: ChatbotCtrl.qualifyMessage(message.text),
         }));
       })
       .finally(() => {
@@ -397,7 +397,7 @@ class ChatbotCtrl {
     }).catch((err) => {
       this.loaders.isLivechatDone = true;
 
-      if (err && Object.values(this.LIVECHAT_CLOSED_REASONS).includes(err.closedReason)) {
+      if (err && Object.values(LIVECHAT_CLOSED_REASONS).includes(err.closedReason)) {
         this.pushMessageToUI(this.botMessage(`livechat_closed_${err.closedReason}`));
 
         if (err.calendar) {
@@ -413,7 +413,7 @@ class ChatbotCtrl {
         return;
       }
 
-      if (err === this.LIVECHAT_NOT_AGENT) {
+      if (err === LIVECHAT_NOT_AGENT) {
         this.pushMessageToUI(this.botMessage('livechat_no_agents_available'));
         return;
       }
@@ -486,7 +486,7 @@ class ChatbotCtrl {
 
   onLivechatHistory(messages) {
     messages.forEach((msg) => {
-      if (msg.type === this.LIVECHAT_MESSAGE_TYPES.Welcome) {
+      if (msg.type === LIVECHAT_MESSAGE_TYPES.Welcome) {
         this.onLivechatWelcome(msg.text);
         return;
       }
