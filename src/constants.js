@@ -19,6 +19,7 @@ export const CHATBOT_MESSAGE_QUALITY = {
 export const CHATBOT_MESSAGE_TYPES = {
   bot: 'bot',
   user: 'user',
+  agent: 'agent',
   postback: 'postback',
   survey: 'survey',
 };

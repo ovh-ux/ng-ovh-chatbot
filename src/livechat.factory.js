@@ -22,8 +22,8 @@ function LivechatFactory(
       this.$window = $window;
       this.LivechatService = LivechatService;
 
-      this.languageCode = languageCode;
-      this.countryCode = countryCode;
+      this.languageCode = languageCode || 'fr';
+      this.countryCode = countryCode || 'FR';
 
       this.librarySettings = new EGainLibrarySettings();
       this.librarySettings.CORSHost = config.host;

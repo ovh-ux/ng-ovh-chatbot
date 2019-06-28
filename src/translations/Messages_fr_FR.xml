@@ -20,6 +20,8 @@
    <translation id="livechat_transfer">Vous allez être transféré vers un conseiller.</translation>
    <translation id="livechat_waiting">Merci de patienter, un conseiller va vous rejoindre.</translation>
    <translation id="livechat_welcome">Bonjour, je m'appelle {{name}}, en quoi puis-je vous aider ?</translation>
+   <translation id="livechat_agent_default_name">L'agent</translation>
+   <translation id="livechat_agent_typing">{{name}} est en train d'écrire…</translation>
    <translation id="livechat_init_error">Oups... la connexion avec le conseiller est impossible. Rechargez la page, puis réessayez.</translation>
    <translation id="livechat_calendar">Le service est ouvert :</translation>
    <translation id="livechat_calendar_day_customToday">Aujourd'hui</translation>

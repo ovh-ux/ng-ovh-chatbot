@@ -26,6 +26,7 @@
                                  'chatbot-message-bot': message.type !== CHATBOT_MESSAGE_TYPES.user
                                                         && message.type !== CHATBOT_MESSAGE_TYPES.agent,
                                  'chatbot-message-toplist': message.quality === CHATBOT_MESSAGE_QUALITY.toplist}">
+
                 <div class="chatbot-avatar"
                      data-ng-if="message.type !== CHATBOT_MESSAGE_TYPES.user
                                  && message.type !== CHATBOT_MESSAGE_TYPES.agent
@@ -34,15 +35,18 @@
                         <use href="#chatbot-svg-avatar" />
                     </svg>
                 </div>
+
                 <div class="chatbot-avatar"
                      data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.agent">
                     <svg viewbox="0 0 32 32">
                         <use href="#chatbot-svg-assistant" />
                     </svg>
                 </div>
+
                 <time class="chatbot-time"
                       data-ng-if="message.quality === CHATBOT_MESSAGE_QUALITY.normal"
                       data-ng-bind="message.time"></time>
+
                 <div class="chatbot-text"
                      data-ng-if="message.quality === CHATBOT_MESSAGE_QUALITY.normal">
                     <span data-ng-bind-html="message.text"></span>
@@ -55,6 +59,7 @@
                         </li>
                     </ul>
 
+                    <!-- Chatbot survey -->
                     <div class="chatbot-survey"
                          data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.survey">
                         <div data-ng-if="message.survey.step === CHATBOT_SURVEY_STEPS.ask">
@@ -88,103 +93,45 @@
                         </form>
                     </div>
 
-                    <table class="chatbot-chat-calendar"
-                           data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.livechatCalendar">
-                        <tr data-ng-repeat="day in message.calendar track by day.name">
-                            <td data-translate="{{'livechat_calendar_day_' + day.name}}"></td>
-                            <td data-ng-if="day.slots.length > 0"
-                                class="chatbot-chat-calendar-slots">
-                                <div data-ng-repeat="slot in day.slots track by $index">
-                                    {{slot.startTime}} - {{slot.endTime}}
-                                </div>
-                            </td>
-                            <td data-ng-if="day.slots.length === 0"
-                                class="chatbot-chat-calendar-slots">
-                                <span data-translate="livechat_calendar_closed_day"></span>
-                            </td>
-                        </tr>
-                    </table>
-
-                    <div class="chatbot-chat-survey"
+                    <div class="chatbot-livechat-survey"
                          data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.livechatSurvey">
-                        <form class="chatbot-chat-survey-form" name="chatSurveyForm">
-                            <p data-translate="livechat_survey_question1"></p>
-                            <label>
-                                <input type="radio"
-                                       name="livechat_survey_question1"
-                                       data-ng-model="message.survey.q1"
-                                       required
-                                       value="3">
-                                <span data-translate="livechat_survey_answer_over_satisfied"></span>
-                            </label>
-                            <label>
-                                <input type="radio"
-                                       name="livechat_survey_question1"
-                                       data-ng-model="message.survey.q1"
-                                       required
-                                       value="1">
-                                <span data-translate="livechat_survey_answer_satisfied"></span>
-                            </label>
-                            <label>
-                                <input type="radio"
-                                       name="livechat_survey_question1"
-                                       data-ng-model="message.survey.q1"
-                                       required
-                                       value="0">
-                                <span data-translate="livechat_survey_answer_unsatisfied"></span>
-                            </label>
-                            <p data-translate="livechat_survey_question2"></p>
-                            <label>
-                                <input type="radio"
-                                       name="livechat_survey_question2"
-                                       data-ng-model="message.survey.q2"
-                                       required
-                                       value="3">
-                                <span data-translate="livechat_survey_answer_over_satisfied"></span>
-                            </label>
-                            <label>
-                                <input type="radio"
-                                       name="livechat_survey_question2"
-                                       data-ng-model="message.survey.q2"
-                                       required
-                                       value="1">
-                                <span data-translate="livechat_survey_answer_satisfied"></span>
-                            </label>
-                            <label>
-                                <input type="radio"
-                                       name="livechat_survey_question2"
-                                       data-ng-model="message.survey.q2"
-                                       required
-                                       value="0">
-                                <span data-translate="livechat_survey_answer_unsatisfied"></span>
-                            </label>
-                            <p data-translate="livechat_survey_question3"></p>
-                            <label>
-                                <input type="radio"
-                                       name="livechat_survey_question3"
-                                       data-ng-model="message.survey.q3"
-                                       required
-                                       value="4">
-                                <span data-translate="chatbot_answer_yes"></span>
-                            </label>
-                            <label>
-                                <input type="radio"
-                                       name="livechat_survey_question3"
-                                       data-ng-model="message.survey.q3"
-                                       required
-                                       value="0">
-                                <span data-translate="chatbot_answer_no"></span>
-                            </label>
-                            <div class="chatbot-chat-survey-submit-container">
-                                <button type="button"
-                                        class="chatbot-chat-survey-submit-button"
-                                        data-ng-disabled="chatSurveyForm.$invalid"
-                                        data-ng-click="$ctrl.sendLivechatSurvey(message)"
-                                        data-translate="livechat_survey_send"></button>
-                            </div>
-                        </form>
+                        <div data-ng-repeat="question in $ctrl.livechatQuestions"
+                             data-ng-if="question === $ctrl.livechatQuestions[message.survey.step]">
+                            <p data-translate="{{:: question.text }}"></p>
+                            <button class="chatbot-feedback"
+                                    data-ng-class="{
+                                      'chatbot-feedback-yes': answer.value === 3 || answer.value === 4,
+                                      'chatbot-feedback-medium': answer.value === 1,
+                                      'chatbot-feedback-no': answer.value === 0,
+                                    }"
+                                    data-ng-repeat="answer in question.answers"
+                                    data-ng-click="$ctrl.answerLivechatSurvey(message, question.id, answer.value)">
+                                <svg viewbox="0 0 32 32" aria-hidden="true">
+                                    <use href="{{:: '#chatbot-svg-face-' + answer.img}}" />
+                                </svg>
+                                <span data-translate="{{:: answer.text }}"></span>
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                <table class="chatbot-livechat-calendar"
+                       data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.livechatCalendar">
+                    <tr data-ng-repeat="day in message.calendar track by day.name">
+                        <td data-translate="{{'livechat_calendar_day_' + day.name}}"></td>
+                        <td data-ng-if="day.slots.length > 0"
+                            class="chatbot-livechat-calendar-slots">
+                            <div data-ng-repeat="slot in day.slots track by $index">
+                                {{slot.startTime}} - {{slot.endTime}}
+                            </div>
+                        </td>
+                        <td data-ng-if="day.slots.length === 0"
+                            class="chatbot-livechat-calendar-slots">
+                            <span data-translate="livechat_calendar_closed_day"></span>
+                        </td>
+                    </tr>
+                </table>
+
                 <div class="chatbot-toplist"
                      data-ng-if="message.quality === CHATBOT_MESSAGE_QUALITY.toplist">
                     <ol data-ng-if="message.rewords.length">
@@ -197,8 +144,11 @@
                     </ol>
                 </div>
             </div>
-            <div data-ng-if="$ctrl.loaders.isAgentTyping">
-                ...
+            <div class="chatbot-toast"
+                 data-ng-if="$ctrl.loaders.isAgentTyping">
+                <span data-translate="livechat_agent_typing"
+                      data-translate-values="{ 'name': $ctrl.agentName }">
+                </span>
             </div>
         </div>
     </div>

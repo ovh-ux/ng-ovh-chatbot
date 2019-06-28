@@ -256,7 +256,8 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
           }
         }
 
-        .chatbot-survey {
+        .chatbot-survey,
+        .chatbot-livechat-survey {
           .chatbot-feedback {
             width: 100%;
             height: 50px;
@@ -287,6 +288,12 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
             color: @chatbot-feedback-yes-color;
           }
 
+          .chatbot-feedback-medium {
+            background-color: @chatbot-feedback-medium-bg;
+            border: @chatbot-feedback-medium-border solid 1px;
+            color: @chatbot-feedback-medium-color;
+          }
+
           .chatbot-feedback-no {
             background-color: @chatbot-feedback-no-bg;
             border: @chatbot-feedback-no-border solid 1px;
@@ -299,11 +306,11 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
           }
         }
 
-        table.chatbot-chat-calendar {
+        table.chatbot-livechat-calendar {
           td {
             vertical-align: top;
 
-            &.chatbot-chat-calendar-slots {
+            &.chatbot-livechat-calendar-slots {
               padding-left: 12px;
             }
           }
@@ -341,31 +348,15 @@ ovh-chatbot { /* stylelint-disable-line selector-type-no-unknown */
         }
       }
 
-      /* livechat
-      .chatbot-chat-survey {
-        .chatbot-chat-survey-form {
-          label {
-            display: block;
-          }
-
-          .chatbot-chat-survey-submit-container {
-            text-align: center;
-            padding-top: 5px;
-
-            .chatbot-chat-survey-submit-button {
-              font-size: 13px;
-            }
-          }
-        }
-
-        .chatbot-text {
-          background-color: @chatbot-bot-message-bg-color;
-          border-radius: 0 12px 12px 12px;
-        }
-      } */
-
       .chatbot-message-toplist {
         margin: 24px 0;
+      }
+
+      .chatbot-toast {
+        margin: 12px 0 0 0;
+        border-radius: 12px;
+        text-align: center;
+        background-color: @chatbot-bot-message-bg-color;
       }
     }
   }
