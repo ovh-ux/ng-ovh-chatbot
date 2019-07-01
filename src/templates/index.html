@@ -96,7 +96,7 @@
                     <div class="chatbot-livechat-survey"
                          data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.livechatSurvey">
                         <div data-ng-repeat="question in $ctrl.livechatQuestions"
-                             data-ng-if="question === $ctrl.livechatQuestions[message.survey.step]">
+                             data-ng-if="question === $ctrl.livechatQuestions[message.survey.step] && !$ctrl.loaders.isAnsweringSurvey">
                             <p data-translate="{{:: question.text }}"></p>
                             <button class="chatbot-feedback"
                                     data-ng-class="{
@@ -112,6 +112,7 @@
                                 <span data-translate="{{:: answer.text }}"></span>
                             </button>
                         </div>
+                        <oui-spinner data-size="s" data-ng-if="$ctrl.loaders.isAnsweringSurvey"></oui-spinner>
                     </div>
                 </div>
 

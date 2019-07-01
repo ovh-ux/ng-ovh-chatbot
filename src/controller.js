@@ -55,6 +55,7 @@ class ChatbotCtrl {
       isStartingLivechat: false,
       isAsking: false,
       isGettingSuggestions: false,
+      isAnsweringSurvey: false,
       isSendingSurvey: false,
       isAgentTyping: false,
       isLivechatDone: false,
@@ -558,11 +559,21 @@ class ChatbotCtrl {
   }
 
   answerLivechatSurvey(message, questionId, value) {
+    this.loaders.isAnsweringSurvey = true;
+
+    // we only want the question, so let's get rid of the introductory text
+    message.text = '';
+
     message.survey.answers[questionId] = value;
     message.survey.step += 1;
     if (message.survey.step >= this.livechatQuestions.length) {
       this.sendLivechatSurvey(message.sessionId, message.survey.answers);
     }
+
+    // we show a fake loader to inform the user we are switching to the next question
+    this.$timeout(() => {
+      this.loaders.isAnsweringSurvey = false;
+    }, 1000);
   }
 
   sendLivechatSurvey(sessionId, answers) {
