@@ -1,5 +1,3 @@
-import reduce from 'lodash/reduce';
-
 class LivechatService {
   /* @ngInject */
   constructor($http, $location, $q) {
@@ -11,15 +9,15 @@ class LivechatService {
   getConfiguration() {
     return this.$http({
       method: 'GET',
-      url: '/engine/2api/chat/configuration',
+      url: '/support/chat/configuration',
     }).then(response => response && response.data)
       .catch(() => null);
   }
 
-  getQueue(universe, category, sso) {
+  getQueue(category, universe, sso) {
     return this.$http({
       method: 'GET',
-      url: '/engine/2api/chat/queue',
+      url: '/support/chat/queue',
       params: {
         universe,
         category,
@@ -36,33 +34,27 @@ class LivechatService {
     });
   }
 
-  // Format Calendar to local hours
   static formatCalendar(calendar) {
-    // Calendar is keyed by english day name
-    // and has a list of open slots
-    return reduce(calendar, (res, slots, day) => {
-      // Ignore null slots days
-      if (slots) {
-        res.push({
+    const result = [];
+    [
+      'monday', 'tuesday', 'wednesday',
+      'thursday', 'friday', 'saturday', 'sunday',
+    ].forEach((day) => {
+      if (calendar[day]) {
+        result.push({
           name: day,
-          slots: this.formatCalendarDay(slots),
+          slots: calendar[day].map(slot => this.formatCalendarSlot(calendar.timezone, slot)),
         });
       }
+    });
 
-      return res;
-    }, []);
+    return result;
   }
 
-  static formatCalendarDay(slots) {
-    return slots.map(slot => this.formatCalendarSlot(slot));
-  }
-
-  static formatCalendarSlot(slot) {
-    const today = moment().format('YYYY-MM-DD');
-    // Format to local time
+  static formatCalendarSlot(timezone, slot) {
     return {
-      startTime: moment(`${today}T${slot.startTime}`).format('LT'),
-      endTime: moment(`${today}T${slot.endTime}`).format('LT'),
+      startTime: moment(`${slot.startTime}${timezone}`, 'HH:mm:ssZ').format('LT'),
+      endTime: moment(`${slot.endTime}${timezone}`, 'HH:mm:ssZ').format('LT'),
     };
   }
 

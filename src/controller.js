@@ -279,10 +279,15 @@ class ChatbotCtrl {
             this.pushMessageToUI(this.survey());
           }, CHATBOT_CONFIG.secondsBeforeSurvey);
         }
-        if (botMessage.startLivechat) {
-          this.enableLivechat();
-        }
+        this.handleLivechatTemplate(botMessage);
       });
+  }
+
+  handleLivechatTemplate(message) {
+    if (message.templateData && message.templateName === 'livechat_cisco') {
+      const { category, universe, product } = message.templateData;
+      this.enableLivechat(category, universe, product);
+    }
   }
 
   postLivechatMessage(messageText) {
@@ -401,7 +406,7 @@ class ChatbotCtrl {
       });
   }
 
-  enableLivechat() {
+  enableLivechat(category, universe, product) {
     // Check livechat initialization
     if (!this.livechatFactory) {
       this.pushMessageToUI(this.botMessage('livechat_init_error'));
@@ -410,7 +415,7 @@ class ChatbotCtrl {
 
     // Check for concurrent session in another tab / window
     if (!this.livechatFactory.hasConcurrentSession()) {
-      this.startLivechat('HLP', 'WEB', 'Hosting');
+      this.startLivechat(category, universe, product);
     } else {
       // Ask whether to end the concurrent session
       this.pushMessageToUI(this.botMessage('livechat_concurrent_session', {
