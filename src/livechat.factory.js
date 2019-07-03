@@ -49,7 +49,7 @@ function LivechatFactory(
       }, 3000);
     }
 
-    start(category, universe, product, restoredSession = null) {
+    start(category, product, productLabel, restoredSession = null) {
       this.library = new EGainLibrary(this.librarySettings);
       this.chat = new this.library.Chat();
       this.eventHandlers = this.chat.GetEventHandlers();
@@ -64,7 +64,7 @@ function LivechatFactory(
           // Get the queue name and opening hours
           return this.LivechatService.getQueue(
             category,
-            universe,
+            product,
             !!samlResponse, // EntryPoint is different when using SSO
           ).then((queueConfig) => {
             if (!queueConfig) {
@@ -97,7 +97,7 @@ function LivechatFactory(
         // Check agent availability
         return availabilityPromise.then(() => {
           if (!restoredSession) {
-            this.prepareCustomer(this.customer, queue, product, samlResponse);
+            this.prepareCustomer(this.customer, queue, productLabel, samlResponse);
           }
 
           this.chat.Initialize(
@@ -389,7 +389,7 @@ function LivechatFactory(
       };
     }
 
-    prepareCustomer(customer, queue, product, samlResponse) {
+    prepareCustomer(customer, queue, productLabel, samlResponse) {
       const emailParam = new this.library.Datatype.CustomerParameter();
       Object.assign(emailParam, {
         eGainParentObject: 'casemgmt',
@@ -427,7 +427,7 @@ function LivechatFactory(
         eGainParentObject: 'casemgmt',
         eGainChildObject: 'activity_data',
         eGainAttribute: 'product',
-        eGainValue: product,
+        eGainValue: productLabel,
         eGainParamName: 'product',
         eGainMinLength: '1',
         eGainMaxLength: '50',

@@ -14,12 +14,12 @@ class LivechatService {
       .catch(() => null);
   }
 
-  getQueue(category, universe, sso) {
+  getQueue(category, product, sso) {
     return this.$http({
       method: 'GET',
       url: '/support/chat/queue',
       params: {
-        universe,
+        product,
         category,
         sso,
       },

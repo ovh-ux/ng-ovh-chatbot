@@ -66,6 +66,8 @@ class ChatbotCtrl {
       showOpenButton: false,
     };
 
+    this.lastLivechatSettings = [];
+
     this.livechatQuestions = [
       {
         id: 'q1',
@@ -235,7 +237,7 @@ class ChatbotCtrl {
     }
 
     this.loaders.isAsking = true;
-    this.postMessage(postbackMessage.text, postbackMessage.options, true)
+    this.postMessage(postbackMessage.link, postbackMessage.options, true)
       .finally(() => {
         this.loaders.isAsking = false;
       });
@@ -248,7 +250,7 @@ class ChatbotCtrl {
         break;
       case 'endConcurrentLivechat':
         this.endConcurrentLivechat();
-        this.startLivechat();
+        this.startLivechat.apply(this.lastLivechatSettings);
         break;
       default:
         break;
@@ -285,8 +287,8 @@ class ChatbotCtrl {
 
   handleLivechatTemplate(message) {
     if (message.templateData && message.templateName === 'livechat_cisco') {
-      const { category, universe, product } = message.templateData;
-      this.enableLivechat(category, universe, product);
+      const { category, product, productLabel } = message.templateData;
+      this.enableLivechat(category, product, productLabel);
     }
   }
 
@@ -406,16 +408,19 @@ class ChatbotCtrl {
       });
   }
 
-  enableLivechat(category, universe, product) {
+  enableLivechat(category, product, productLabel) {
     // Check livechat initialization
     if (!this.livechatFactory) {
       this.pushMessageToUI(this.botMessage('livechat_init_error'));
       return;
     }
 
+    // remember what the user answered
+    this.lastLivechatSettings = [category, product, productLabel];
+
     // Check for concurrent session in another tab / window
     if (!this.livechatFactory.hasConcurrentSession()) {
-      this.startLivechat(category, universe, product);
+      this.startLivechat(category, product, productLabel);
     } else {
       // Ask whether to end the concurrent session
       this.pushMessageToUI(this.botMessage('livechat_concurrent_session', {
@@ -433,11 +438,11 @@ class ChatbotCtrl {
     }
   }
 
-  startLivechat(category, universe, product) {
+  startLivechat(category, product, productLabel) {
     this.started = true;
     this.livechat = true;
     this.loaders.isStartingLivechat = true;
-    this.livechatFactory.start(category, universe, product).then(() => {
+    this.livechatFactory.start(category, product, productLabel).then(() => {
       this.pushMessageToUI(this.botMessage('livechat_transfer'));
     }).catch((err) => {
       this.loaders.isLivechatDone = true;
