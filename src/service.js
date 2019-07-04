@@ -1,4 +1,5 @@
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 
 import { CHATBOT_API_ACTIONS, CHATBOT_MESSAGE_TYPES } from './constants';
 
@@ -16,24 +17,38 @@ class ChatbotService {
       subsidiary: 'FR',
     };
 
+    this.contextIdStorageKey = 'ovhChatbotContextId';
+
     this.config = { ...this.defaultConfig };
   }
 
-  talk(userInput, contextId, extraParameters = {}) {
+  talk(userInput, extraParameters = {}) {
     return this.post({
       action: CHATBOT_API_ACTIONS.talk,
-      contextId: contextId || '',
+      contextId: this.getContextId() || '',
       language: this.config.language || this.defaultConfig.language,
       space: this.config.space || this.defaultConfig.space,
       userInput,
       extraParameters,
-    }).then(({ data }) => data);
+    }).then(({ data }) => {
+      this.saveContextId(data.contextId);
+      return data;
+    });
   }
 
-  history(contextId) {
+  setContext(name, value) {
+    return this.post({
+      action: CHATBOT_API_ACTIONS.setContext,
+      contextId: this.getContextId() || '',
+      name,
+      value,
+    });
+  }
+
+  history() {
     return this.get({
       action: CHATBOT_API_ACTIONS.history,
-      contextId,
+      contextId: this.getContextId() || '',
     }).then(({ data }) => data)
       .then(({ interactions }) => interactions.reduce(
         (messages, interaction) => {
@@ -71,7 +86,9 @@ class ChatbotService {
   }
 
   automaticMessage(universe, subsidiary) {
-    return this.talk(`#universe:${universe || this.defaultConfig.universe};subsidiary:${subsidiary || this.defaultConfig.subsidiary}`);
+    return this.setContext('universe', universe)
+      .then(() => this.setContext('country', subsidiary))
+      .then(() => this.talk('#manager_chatbot_welcome'));
   }
 
   topKnowledge(maxKnowledge) {
@@ -94,10 +111,10 @@ class ChatbotService {
     }).then(({ data }) => data);
   }
 
-  feedback(contextId, userInput, reason) {
+  feedback(userInput, reason) {
     return this.post({
       action: CHATBOT_API_ACTIONS.feedback,
-      contextId,
+      contextId: this.getContextId() || '',
       userInput,
       reason,
     }).then(({ data }) => data);
@@ -138,6 +155,16 @@ class ChatbotService {
       serviceType: 'aapi',
       withCredentials: true,
     });
+  }
+
+  getContextId() {
+    return localStorage.getItem(this.contextIdStorageKey);
+  }
+
+  saveContextId(id) {
+    if (!isEmpty(id)) {
+      localStorage.setItem(this.contextIdStorageKey, id);
+    }
   }
 }
 

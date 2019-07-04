@@ -267,9 +267,8 @@ class ChatbotCtrl {
     });
 
     return this.ChatbotService
-      .talk(messageText, this.constructor.getContextId(), options)
+      .talk(messageText, options)
       .then((botMessage) => {
-        this.constructor.saveContextId(botMessage.contextId);
         this.pushMessageToUI({
           ...botMessage,
           time: moment(botMessage.serverTime).format('LT'),
@@ -330,7 +329,6 @@ class ChatbotCtrl {
   answerSurvey(answer, details) {
     this.removeSurvey();
     return this.ChatbotService.feedback(
-      this.constructor.getContextId(),
       answer ? 'positive' : 'negative',
       details,
     ).then(() => {
@@ -381,18 +379,16 @@ class ChatbotCtrl {
         this.enableScroll();
         this.enableAutocomplete();
 
-        return this.ChatbotService.informationBanner();
-      })
-      .then((banner) => {
-        this.banner = this.constructor.parseBanner(banner);
-
-        const contextId = this.constructor.getContextId();
         this.loaders.isStarting = true;
-
-        return contextId ? this.ChatbotService.history(contextId) : [];
+        return this.ChatbotService.history();
       })
       .catch(() => []) // if history fails
-      .then((messages) => {
+      .then(messages => this.$q.all({
+        banner: this.ChatbotService.informationBanner(),
+        messages,
+      }))
+      .then(({ banner, messages }) => {
+        this.banner = this.constructor.parseBanner(banner);
         if (!messages || isEmpty(messages)) {
           return this.welcome();
         }
@@ -684,16 +680,6 @@ class ChatbotCtrl {
 
   focusInput() {
     this.$element.find('.chatbot-footer textarea').focus();
-  }
-
-  static getContextId() {
-    return localStorage.getItem('ovhChatbotContextId');
-  }
-
-  static saveContextId(id) {
-    if (id) {
-      localStorage.setItem('ovhChatbotContextId', id);
-    }
   }
 
   static parseBanner(bannerMessage) {

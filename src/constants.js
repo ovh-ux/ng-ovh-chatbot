@@ -1,5 +1,6 @@
 export const CHATBOT_API_ACTIONS = {
   talk: 'talk',
+  setContext: 'setContext',
   history: 'history',
   feedback: 'feedback',
   suggestions: 'suggestions',
