@@ -56,7 +56,18 @@ class ChatbotService {
   }
 
   informationBanner() {
-    return this.talk('#bandeau d\'information');
+    return this.talk('#bandeau d\'information')
+      .then((message) => {
+        if ([
+          'GBMisunderstoodQuestion',
+          'RWOneReword',
+          'RWTwoRewords',
+          'RWThreeRewords',
+        ].includes(message.typeResponse)) {
+          return null;
+        }
+        return message;
+      });
   }
 
   automaticMessage(universe, subsidiary) {

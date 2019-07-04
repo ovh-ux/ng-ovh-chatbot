@@ -1,8 +1,9 @@
 import filter from 'lodash/filter';
+import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
-import takeWhile from 'lodash/takeWhile';
 import remove from 'lodash/remove';
+import takeWhile from 'lodash/takeWhile';
 
 import {
   CHATBOT_CONFIG,
@@ -696,7 +697,7 @@ class ChatbotCtrl {
   }
 
   static parseBanner(bannerMessage) {
-    return bannerMessage.text;
+    return get(bannerMessage, 'text', null);
   }
 }
 
