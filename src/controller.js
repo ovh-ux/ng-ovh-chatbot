@@ -118,8 +118,8 @@ class ChatbotCtrl {
     return this.LivechatService.getConfiguration().then((config) => {
       this.livechatFactory = new this.LivechatFactory(
         config,
-        this.config.subsidiary,
         this.config.language,
+        this.config.subsidiary,
         this.bindLivechatCallbacks({
           onConnectSuccess: this.onLivechatConnectionSuccess,
           onWelcomeMessage: this.onLivechatWelcome,
