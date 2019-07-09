@@ -5,7 +5,8 @@ export default {
   template,
   controller,
   bindings: {
-    url: '@?',
+    canSwitchToLivechat: '<?',
     config: '<?',
+    url: '@?',
   },
 };

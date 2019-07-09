@@ -14,7 +14,7 @@ class ChatbotService {
       space: 'Default/Web',
       universe: 'WEB',
       language: 'fr',
-      subsidiary: 'FR',
+      country: 'FR',
     };
 
     this.contextIdStorageKey = 'ovhChatbotContextId';
@@ -85,9 +85,9 @@ class ChatbotService {
       });
   }
 
-  automaticMessage(universe, subsidiary) {
+  automaticMessage(universe, country) {
     return this.setContext('universe', universe)
-      .then(() => this.setContext('country', subsidiary))
+      .then(() => this.setContext('country', country))
       .then(() => this.talk('#manager_chatbot_welcome'));
   }
 
@@ -165,6 +165,10 @@ class ChatbotService {
     if (!isEmpty(id)) {
       localStorage.setItem(this.contextIdStorageKey, id);
     }
+  }
+
+  removeContextId() {
+    localStorage.removeItem(this.contextIdStorageKey);
   }
 }
 

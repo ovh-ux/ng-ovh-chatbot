@@ -24,7 +24,7 @@ In your `index.html`:
 <ovh-chatbot url="/url/to/the/chatbot/api"></ovh-chatbot>
 
 <!-- you can also provide additional configuration -->
-<ovh-chatbot config="{ 'space': 'Web', 'language': 'fr', 'subsidiary': 'BE' }"></ovh-chatbot>
+<ovh-chatbot config="{ 'space': 'Web', 'language': 'fr', 'country': 'BE' }"></ovh-chatbot>
 ```
 
 In your `app.js`:
@@ -39,6 +39,14 @@ angular
   ]);
 ```
 
+## Bindings
+
+| Key                    | Value              | Default       | Description                                                     |
+| ---------------------- | ------------------ | ------------- | --------------------------------------------------------------- |
+| url                    | Any string         | "/chatbot"    | URL of the API endpoint for the chatbot                         |
+| can-switch-to-livechat | `true` or `false`  | `false`       | Whether the bot can switch to a livechat (requires vendor libs) |
+| config                 | JS object          | {}            | Configure various aspects of the bot (see next table)           |
+
 ## Config fields
 
 | Key        | Value            | Default       | Description                                   |
@@ -46,7 +54,7 @@ angular
 | space      | Any string       | "Default/Web" | Provide the knowledge space for the bot       |
 | universe   | Any string       | "WEB"         | Provide the universe for the bot              |
 | language   | Two letters code | "fr"          | Provide the language for the bot              |
-| subsidiary | Two letters code | "FR"          | Provide the country for the bot               |
+| country    | Two letters code | "FR"          | Provide the country for the bot               |
 
 ## Tips
 

@@ -40,16 +40,14 @@ class ChatbotCtrl {
   }
 
   $onInit() {
+    this.initialized = false;
     this.started = false;
     this.livechat = false;
     this.hidden = true;
+
     this.messages = [];
     this.suggestions = [];
     this.banner = null;
-
-    this.$translate('livechat_agent_default_name').then((agentName) => {
-      this.agentName = agentName;
-    });
 
     this.loaders = {
       isStarting: false,
@@ -104,22 +102,32 @@ class ChatbotCtrl {
 
     this.$rootScope.$on('ovh-chatbot:open', () => this.open());
     this.$rootScope.$on('ovh-chatbot:opened', () => this.focusInput());
+  }
 
-    this.initializeLivechat();
+  init() {
+    this.initialized = true;
 
     this.config = this.config || {};
     if (isString(this.url)) {
       this.config.url = this.url;
     }
     this.ChatbotService.setConfig(this.config);
+
+    if (this.canSwitchToLivechat) {
+      this.initializeLivechat();
+    }
   }
 
   initializeLivechat() {
+    this.$translate('livechat_agent_default_name').then((agentName) => {
+      this.agentName = agentName;
+    });
+
     return this.LivechatService.getConfiguration().then((config) => {
       this.livechatFactory = new this.LivechatFactory(
         config,
         this.config.language,
-        this.config.subsidiary,
+        this.config.country,
         this.bindLivechatCallbacks({
           onConnectSuccess: this.onLivechatConnectionSuccess,
           onWelcomeMessage: this.onLivechatWelcome,
@@ -304,7 +312,7 @@ class ChatbotCtrl {
   }
 
   welcome() {
-    return this.ChatbotService.automaticMessage(this.config.universe, this.config.subsidiary)
+    return this.ChatbotService.automaticMessage(this.config.universe, this.config.country)
       .then(message => [
         message,
         this.botMessage('chatbot_welcome_message'),
@@ -355,6 +363,10 @@ class ChatbotCtrl {
       return;
     }
 
+    if (!this.initialized) {
+      this.init();
+    }
+
     if (!this.started) {
       this.start();
     }
@@ -369,8 +381,6 @@ class ChatbotCtrl {
   start() {
     this.loaders.isLivechatDone = false;
 
-    this.enableDrag();
-    this.enableScroll();
     return this.$q.when(true)
       .then(() => {
         this.started = true;
@@ -406,6 +416,10 @@ class ChatbotCtrl {
   }
 
   enableLivechat(category, product, productLabel) {
+    if (!this.canSwitchToLivechat) {
+      return;
+    }
+
     // Check livechat initialization
     if (!this.livechatFactory) {
       this.pushMessageToUI(this.botMessage('livechat_init_error'));
@@ -499,8 +513,8 @@ class ChatbotCtrl {
       // with the next session
       const killerFactory = new this.LivechatFactory(
         config,
-        this.config.subsidiary,
         this.config.language,
+        this.config.country,
       );
       killerFactory.endConcurrentSession();
     }).catch(() => {
