@@ -13,6 +13,7 @@ import {
   LIVECHAT_CLOSED_REASONS,
   LIVECHAT_MESSAGE_TYPES,
   LIVECHAT_NOT_AGENT,
+  LIVECHAT_QUESTIONS,
 } from './constants';
 
 class ChatbotCtrl {
@@ -67,38 +68,10 @@ class ChatbotCtrl {
 
     this.lastLivechatSettings = [];
 
-    this.livechatQuestions = [
-      {
-        id: 'q1',
-        text: 'livechat_survey_question1',
-        answers: [
-          { value: 3, text: 'livechat_survey_answer_over_satisfied', img: 'happy' },
-          { value: 1, text: 'livechat_survey_answer_satisfied', img: 'medium' },
-          { value: 0, text: 'livechat_survey_answer_unsatisfied', img: 'sad' },
-        ],
-      },
-      {
-        id: 'q2',
-        text: 'livechat_survey_question2',
-        answers: [
-          { value: 3, text: 'livechat_survey_answer_over_satisfied', img: 'happy' },
-          { value: 1, text: 'livechat_survey_answer_satisfied', img: 'medium' },
-          { value: 0, text: 'livechat_survey_answer_unsatisfied', img: 'sad' },
-        ],
-      },
-      {
-        id: 'q3',
-        text: 'livechat_survey_question3',
-        answers: [
-          { value: 4, text: 'chatbot_answer_yes', img: 'happy' },
-          { value: 0, text: 'chatbot_answer_no', img: 'sad' },
-        ],
-      },
-    ];
-
     this.$scope.CHATBOT_MESSAGE_QUALITY = CHATBOT_MESSAGE_QUALITY;
     this.$scope.CHATBOT_MESSAGE_TYPES = CHATBOT_MESSAGE_TYPES;
     this.$scope.CHATBOT_SURVEY_STEPS = CHATBOT_SURVEY_STEPS;
+    this.$scope.LIVECHAT_QUESTIONS = LIVECHAT_QUESTIONS;
 
     this.$rootScope.$on('ovh-chatbot:open', () => this.open());
     this.$rootScope.$on('ovh-chatbot:opened', () => this.focusInput());
@@ -587,7 +560,7 @@ class ChatbotCtrl {
 
     message.survey.answers[questionId] = value;
     message.survey.step += 1;
-    if (message.survey.step >= this.livechatQuestions.length) {
+    if (message.survey.step >= LIVECHAT_QUESTIONS.length) {
       this.sendLivechatSurvey(message.sessionId, message.survey.answers);
     }
 

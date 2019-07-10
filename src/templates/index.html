@@ -95,8 +95,8 @@
 
                     <div class="chatbot-livechat-survey"
                          data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.livechatSurvey">
-                        <div data-ng-repeat="question in $ctrl.livechatQuestions"
-                             data-ng-if="question === $ctrl.livechatQuestions[message.survey.step] && !$ctrl.loaders.isAnsweringSurvey">
+                        <div data-ng-repeat="question in LIVECHAT_QUESTIONS track by $index"
+                             data-ng-if="question === LIVECHAT_QUESTIONS[message.survey.step] && !$ctrl.loaders.isAnsweringSurvey">
                             <p data-translate="{{:: question.text }}"></p>
                             <button class="chatbot-feedback"
                                     data-ng-class="{
@@ -104,7 +104,7 @@
                                       'chatbot-feedback-medium': answer.value === 1,
                                       'chatbot-feedback-no': answer.value === 0,
                                     }"
-                                    data-ng-repeat="answer in question.answers"
+                                    data-ng-repeat="answer in question.answers track by $index"
                                     data-ng-click="$ctrl.answerLivechatSurvey(message, question.id, answer.value)">
                                 <svg viewbox="0 0 32 32" aria-hidden="true">
                                     <use href="{{:: '#chatbot-svg-face-' + answer.img}}" />

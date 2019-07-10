@@ -45,6 +45,35 @@ export const LIVECHAT_MESSAGE_TYPES = {
 
 export const LIVECHAT_NOT_AGENT = 'no_agent_available';
 
+export const LIVECHAT_QUESTIONS = [
+  {
+    id: 'q1',
+    text: 'livechat_survey_question1',
+    answers: [
+      { value: 3, text: 'livechat_survey_answer_over_satisfied', img: 'happy' },
+      { value: 1, text: 'livechat_survey_answer_satisfied', img: 'medium' },
+      { value: 0, text: 'livechat_survey_answer_unsatisfied', img: 'sad' },
+    ],
+  },
+  {
+    id: 'q2',
+    text: 'livechat_survey_question2',
+    answers: [
+      { value: 3, text: 'livechat_survey_answer_over_satisfied', img: 'happy' },
+      { value: 1, text: 'livechat_survey_answer_satisfied', img: 'medium' },
+      { value: 0, text: 'livechat_survey_answer_unsatisfied', img: 'sad' },
+    ],
+  },
+  {
+    id: 'q3',
+    text: 'livechat_survey_question3',
+    answers: [
+      { value: 4, text: 'chatbot_answer_yes', img: 'happy' },
+      { value: 0, text: 'chatbot_answer_no', img: 'sad' },
+    ],
+  },
+];
+
 export default {
   CHATBOT_API_ACTIONS,
   CHATBOT_CONFIG,
@@ -54,4 +83,5 @@ export default {
   LIVECHAT_CLOSED_REASONS,
   LIVECHAT_MESSAGE_TYPES,
   LIVECHAT_NOT_AGENT,
+  LIVECHAT_QUESTIONS,
 };
