@@ -114,24 +114,24 @@
                         </div>
                         <oui-spinner data-size="s" data-ng-if="$ctrl.loaders.isAnsweringSurvey"></oui-spinner>
                     </div>
-                </div>
 
-                <table class="chatbot-livechat-calendar"
-                       data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.livechatCalendar">
-                    <tr data-ng-repeat="day in message.calendar track by day.name">
-                        <td data-translate="{{'livechat_calendar_day_' + day.name}}"></td>
-                        <td data-ng-if="day.slots.length > 0"
-                            class="chatbot-livechat-calendar-slots">
-                            <div data-ng-repeat="slot in day.slots track by $index">
-                                {{slot.startTime}} - {{slot.endTime}}
-                            </div>
-                        </td>
-                        <td data-ng-if="day.slots.length === 0"
-                            class="chatbot-livechat-calendar-slots">
-                            <span data-translate="livechat_calendar_closed_day"></span>
-                        </td>
-                    </tr>
-                </table>
+                    <table class="chatbot-livechat-calendar"
+                           data-ng-if="message.type === CHATBOT_MESSAGE_TYPES.livechatCalendar">
+                        <tr data-ng-repeat="day in message.calendar track by day.name">
+                            <td data-translate="{{'livechat_calendar_day_' + day.name}}"></td>
+                            <td data-ng-if="day.slots.length > 0"
+                                class="chatbot-livechat-calendar-slots">
+                                <div data-ng-repeat="slot in day.slots track by $index">
+                                    {{slot.startTime}} - {{slot.endTime}}
+                                </div>
+                            </td>
+                            <td data-ng-if="day.slots.length === 0"
+                                class="chatbot-livechat-calendar-slots">
+                                <span data-translate="livechat_calendar_closed_day"></span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
 
                 <div class="chatbot-toplist"
                      data-ng-if="message.quality === CHATBOT_MESSAGE_QUALITY.toplist">
