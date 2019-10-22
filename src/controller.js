@@ -120,7 +120,7 @@ class ChatbotCtrl {
 
   welcome() {
     return this.ChatbotService.topKnowledge(3)
-      .then(rewords => ([
+      .then((rewords) => ([
         this.botMessage('chatbot_welcome_message', { rewords }),
       ]));
   }
@@ -152,7 +152,7 @@ class ChatbotCtrl {
   }
 
   removeSurvey() {
-    remove(this.messages, message => message.type === this.MESSAGE_TYPES.survey);
+    remove(this.messages, (message) => message.type === this.MESSAGE_TYPES.survey);
   }
 
   close() {
@@ -216,7 +216,7 @@ class ChatbotCtrl {
         .then((suggestions) => {
           this.suggestions = suggestions
             .sort((a, b) => b.score - a.score)
-            .map(suggestion => suggestion.rootConditionReword)
+            .map((suggestion) => suggestion.rootConditionReword)
             .filter((suggestion, index, self) => self.indexOf(suggestion) === index)
             .splice(0, 3);
         })
@@ -250,7 +250,7 @@ class ChatbotCtrl {
   }
 
   enableAutocomplete() {
-    this.$scope.$watch(() => this.message, newMessage => this.suggest(newMessage));
+    this.$scope.$watch(() => this.message, (newMessage) => this.suggest(newMessage));
   }
 
   focusInput() {
