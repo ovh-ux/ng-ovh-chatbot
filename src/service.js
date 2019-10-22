@@ -51,7 +51,7 @@ class ChatbotService {
       action: this.CHATBOT_API_ACTIONS.topKnowledge,
       maxKnowledge,
     }).then(({ data }) => get(data, 'knowledgeArticles', []))
-      .then(knowledgeArticles => knowledgeArticles.map(article => ({
+      .then((knowledgeArticles) => knowledgeArticles.map((article) => ({
         text: article.reword,
         options: {},
       })));
