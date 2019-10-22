@@ -1,6 +1,6 @@
 {
   "name": "@ovh-ux/ng-ovh-chatbot",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "OVH chatbot component for Angular",
   "keywords": [
     "ovh",
